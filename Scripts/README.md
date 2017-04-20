@@ -2,7 +2,7 @@ This directory will contain scripts and ARM templates to create DSVM with differ
 
 Here is some helpful tips. 
 
-## Creating a DSVM for Linux (Ubuntu):
+## Creating a DSVM for Linux (Ubuntu) using command line:
 
 To create a Ubuntu DSVM using Azure CLI Version 2 (ARM template - UbuntuDSVM.json available in this directory and used below) use the steps below.
 
