@@ -2,7 +2,7 @@
 
   "itemDisplayName": "Data Science Virtual Machine",
   "description": "Your Analytics Desktop on the Azure cloud offered in both Windows and Linux",
-  "summary": "Your Analytics Desktop on the Azure cloud offered in Windows and Linux (Ubuntu and CentOS)",
+  "summary": "Data Science Virtual Machine",
   "githubUsername": "gopitk",
   "dateUpdated": "2017-04-20"
 }
