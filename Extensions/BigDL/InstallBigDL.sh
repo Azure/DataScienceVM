@@ -1,6 +1,7 @@
 #!/bin/bash
 # Install Instructions Courtesy: Sergey Ermolin from Intel
 /anaconda/bin/pip install wordcloud
+/anaconda/bin/pip install tensorboard
 cd /opt
 git clone https://github.com/intel-analytics/BigDL.git
 cd BigDL
