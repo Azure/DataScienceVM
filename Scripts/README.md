@@ -29,5 +29,5 @@ Step 2: Use Azure CLI to create the VM
     # Follow instructions of az login to signin to your Azure account. May need to select subscription if you have multiple
     az login
     az group create --name [[NAME OF RESOURCE GROUP]] --location [[ Data center. For eg: "West US 2"]
-    az group deployment create --resource-group  [[NAME OF RESOURCE GROUP ABOVE]]  --template-uri https://raw.githubusercontent.com/Azure/DataScienceVM/master/Scripts/UbuntuDSVM.json --parameters @[[PARAMETER JSON FILE]]
+    az group deployment create --resource-group  [[NAME OF RESOURCE GROUP ABOVE]]  --template-uri https://raw.githubusercontent.com/Azure/DataScienceVM/master/Scripts/CreateDSVM/Ubuntu/azuredeploy.json --parameters @[[PARAMETER JSON FILE]]
     
