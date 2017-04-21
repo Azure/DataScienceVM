@@ -22,7 +22,7 @@ Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The
   }
 }
 ````
-Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](UbuntuDSVM.json). 
+Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](CreateDSVM/Ubuntu/azuredeploy.json). 
 
 Step 2: Use Azure CLI to create the VM
 
