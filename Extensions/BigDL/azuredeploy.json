@@ -66,7 +66,7 @@
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
         "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/BigDL/InstallBigDL.sh",
-        "commandToExecute": "bash InstallBigDL.sh"       
+        "commandToExecute": "bash InstallBigDL.sh"
     },
     "resources": [
         {
@@ -207,7 +207,7 @@
          {
           "type": "extensions",
           "name": "[variables('vmName')]",
-          "apiVersion": "[variables('apiVersion')]",
+          "apiVersion": "2015-06-15",
           "location": "[variables('location')]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
