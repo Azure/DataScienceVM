@@ -23,3 +23,5 @@
 </a>
 
 ### Visit the **[DSVM Discussion Forum](http://aka.ms/dsvm/forum)** for Community Support and Q&A.
+
+<iframe src="https://channel9.msdn.com/blogs/Cloud-and-Enterprise-Premium/Data-Science-Virtual-Machine--A-Walkthrough-of-end-to-end-Analytics-Scenarios/player" width="960" height="540" allowFullScreen frameBorder="0"></iframe>
