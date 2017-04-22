@@ -1,6 +1,6 @@
 # This Folder contains the documents, assets and worked-out example notebooks that were covered in the Live Webinar on 4th of April 2017
 ### Title: "Data Science Virtual Machine – A Walkthrough of end-to-end Analytics Scenarios"
-### The Webinar recording is available **[HERE](http://aka.ms/dsvm/webinar)**
+### The Webinar recording is available **[HERE...](https://channel9.msdn.com/blogs/Cloud-and-Enterprise-Premium/Data-Science-Virtual-Machine--A-Walkthrough-of-end-to-end-Analytics-Scenarios)**
 ### A **[Data Science Virtual Machine](http://aka.ms/dsvm)** on Microsoft Azure is required to run the included notebooks without editing.
 #### 
 
@@ -19,9 +19,7 @@
 
 ####
 <a href="http://aka.ms/dsvm/webinar">
-    <img src="MiscAssets\Webinar Banner.png">
+    <img src="MiscAssets\Webinar Banner.png" width=800>
 </a>
 
 ### Visit the **[DSVM Discussion Forum](http://aka.ms/dsvm/forum)** for Community Support and Q&A.
-
-<iframe src="https://channel9.msdn.com/blogs/Cloud-and-Enterprise-Premium/Data-Science-Virtual-Machine--A-Walkthrough-of-end-to-end-Analytics-Scenarios/player" width="960" height="540" allowFullScreen frameBorder="0"></iframe>
