@@ -23,4 +23,4 @@
 </a>
 
 ### Visit the **[DSVM Discussion Forum](http://aka.ms/dsvm/forum)** for Community Support and Q&A.
-### The notebooks included on this repository were configured to run on DSVMs that were available on the Azure Marketplace on the 4th of April 2017. They may require changes in order to run correctly run elsewhere.
+ *NOTE: The notebooks included on this repository are configured to run on DSVMs that were available on the Azure Marketplace on the 4th of April 2017. They may require changes in order to run correctly elsewhere.***
