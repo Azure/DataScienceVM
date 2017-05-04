@@ -240,10 +240,10 @@
 			 {
 			  "type": "extensions",
 			  "name": "[variables('vmName')]",
-			  "apiVersion": "[variables('apiVersion')]",
+			  "apiVersion": "2015-06-15",
 			  "location": "[variables('location')]",
 			  "dependsOn": [
-				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
 			  ],
 			  "properties": {
 				"publisher": "Microsoft.OSTCExtensions",
