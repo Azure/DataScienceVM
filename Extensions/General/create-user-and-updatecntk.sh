@@ -27,4 +27,5 @@ for i in $(seq 1 $num);  do
   useradd -m -d /home/user$u -s /bin/bash user$u
   echo user$u:A1imdl$p | chpasswd
   echo user$u, A1imdl$p >> '/tmp/usersinfo.csv';
+  usermod -aG docker user$u
 done
