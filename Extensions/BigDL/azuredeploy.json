@@ -206,7 +206,7 @@
         "resources": [
          {
           "type": "extensions",
-          "name": "[variables('vmName')]",
+          "name": "BigDL",
           "apiVersion": "2015-06-15",
           "location": "[variables('location')]",
           "dependsOn": [
