@@ -15,11 +15,13 @@ pip install --upgrade --no-deps https://cntk.ai/PythonWheel/GPU/cntk-2.0rc2-cp35
 cd /etc/skel/notebooks
 python -m cntk.sample_installer
 
+docker pull chainer/chainer
 mkdir /etc/skel/CHAINER
 cd /etc/skel/CHAINER
 wget https://raw.githubusercontent.com/Microsoft/AI-Immersion-Workshop/master/Deep%20Learning%20and%20the%20Microsoft%20Cognitive%20Toolkit/CNTK%20Hands-on%20in%20GPU%20DSVMs/download_MNIST_chainer.py
-python download_MNIST_chainer.py
 wget https://raw.githubusercontent.com/Microsoft/AI-Immersion-Workshop/master/Deep%20Learning%20and%20the%20Microsoft%20Cognitive%20Toolkit/CNTK%20Hands-on%20in%20GPU%20DSVMs/MNIST_chainer.py
+# download the data for attendees
+docker run -v /etc/skel/CHAINER:/host chainer/chainer /bin/bash -c "cd /host && python download_MNIST_chainer.py"
 
 for i in $(seq 1 $num);  do
   u=`openssl rand -hex 2`;
