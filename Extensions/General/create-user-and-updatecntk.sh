@@ -10,10 +10,21 @@ else
         num=$1
 fi
 
+# Download dataset for tutorial
+cd /data
+wget https://gksparkstore.blob.core.windows.net/gkaiimersion/Examples.tar.gz
+tar xf Examples.tar.gz
+rm Examples.tar.gz
+
 source /anaconda/bin/activate py35
 pip install --upgrade --no-deps https://cntk.ai/PythonWheel/GPU/cntk-2.0rc2-cp35-cp35m-linux_x86_64.whl
 cd /etc/skel/notebooks
+rm -rf CNTK
 python -m cntk.sample_installer
+
+cd /etc/skel/notebooks/CNTK-Samples-2-0rc2
+mv Examples Examples2
+ln -s /data/Examples Examples
 
 # set up the CHAINER demo
 docker pull chainer/chainer
