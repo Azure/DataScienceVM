@@ -43,7 +43,7 @@ for i in $(seq 1 $num);  do
   p=`openssl rand -hex 3`;
   useradd -m -d /home/user$u -s /bin/bash user$u
   echo user$u:A1imdl$p | chpasswd
-  echo user$u, A1imdl$p >> '/tmp/usersinfo.csv';
+  echo user$u, A1imdl$p >> '/data/usersinfo.csv';
   usermod -aG docker user$u
 done
 
