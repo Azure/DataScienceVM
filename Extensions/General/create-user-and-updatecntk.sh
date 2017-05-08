@@ -47,5 +47,3 @@ for i in $(seq 1 $num);  do
   usermod -aG docker user$u
 done
 
-# remove the 4.4.0-75 kernel
-dpkg -l | awk '{print $2}' | grep 4.4.0-75 | xargs sudo apt-get purge -y
