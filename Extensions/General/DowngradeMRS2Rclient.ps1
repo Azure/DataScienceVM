@@ -19,6 +19,7 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 # Install some R libraries and Jupyter R Kernel. You can add  other libraries you want to install to the list below.
 cmd /c rscript.exe -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'pbdZMQ', 'devtools', 'uuid', 'digest', 'dplyr', 'ggplot2', 'AzureML', 'xgboost', 'stringi', 'stringr', 'tidyr'))"
 cmd /c rscript.exe -e "devtools::install_github('IRkernel/IRkernel')"
+cmd /c rscript.exe -e "IRkernel::installspec(user = FALSE)"
 
 # Cleanup
 del C:\tmp\RClientSetup.exe
