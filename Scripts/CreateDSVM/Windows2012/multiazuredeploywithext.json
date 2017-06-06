@@ -226,7 +226,7 @@
             },
 			"resources": [
 			 {
-			  "type": "Microsoft.Compute/virtualMachines/extensions",
+			  "type": "extensions",
 			  "name": "[variables('vmName')]",
 			  "apiVersion": "2015-06-15",
 			  "location": "[variables('location')]",
