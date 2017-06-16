@@ -1,4 +1,4 @@
-# Joining Ububntu DSVM to Active Directory
+# Joining Ubuntu DSVM to Active Directory
 
 This document shows how you can  join a Ubuntu DSVM to your active directory domain. 
 
@@ -53,6 +53,6 @@ sudo pam-auth-update
 # Enable create home directory option. 
 </pre>
 
-That is it. Your DSVM is now joined to active directory and your  users can login with their corp credentials. 
+That is it. Your DSVM is now joined to active directory and your  users can login with their corp credentials. You can also login to JupyterHub using the Active directory credentials.  
 
 
