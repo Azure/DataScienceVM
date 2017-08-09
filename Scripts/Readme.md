@@ -1,0 +1,1 @@
+This directory contains useful scripts for creating DSVMs from ARM templates and joining a DSVM to an Active Directory domain.
