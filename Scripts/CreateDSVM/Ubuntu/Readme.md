@@ -2,6 +2,14 @@
 
 Prerequisites: You need Azure CLI 2.0 on your desktop/laptop/VM. You can download it from [here](https://docs.microsoft.com/cli/azure/install-az-cli2). The DSVM automatically comes preinstalled with Azure CLI 2.0.
 
+### Creating a DSVM for Linux (Ubuntu) from the portal:
+
+Deploy a DSVM for Linux (Ubuntu) using the portal:
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FDataScienceVM%2Fmaster%2FScripts%2FCreateDSVM%2FUbuntu%2Fazuredeploy.json" target="_blank">
+ -    <img src="http://azuredeploy.net/deploybutton.png"/>
+ -</a>
+
 ### Creating a DSVM for Linux (Ubuntu) using command line:
 
 To create a Ubuntu DSVM using Azure CLI Version 2 (ARM template - azuredeploy.json available in the CreateDSVM/Ubuntu directory and used below) use the steps below.
