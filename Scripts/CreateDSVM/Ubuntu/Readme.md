@@ -1,18 +1,28 @@
-## Creating DSVM from command line
+# Creating a DSVM for Linux (Ubuntu)
 
-Prerequisites: You need Azure CLI 2.0 on your desktop/laptop/VM. You can download it from [here](https://docs.microsoft.com/cli/azure/install-az-cli2). The DSVM automatically comes preinstalled with Azure CLI 2.0.
+These directions show you how to create an Ubuntu DSVM using the portal or the Azure CLI.
 
-### Creating a DSVM for Linux (Ubuntu) from the portal:
+## Creating a DSVM for Linux (Ubuntu) from the portal
 
-Deploy a DSVM for Linux (Ubuntu) using the portal:
+### Deploy a DSVM for Linux (Ubuntu) with password authentication using the portal
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FDataScienceVM%2Fmaster%2FScripts%2FCreateDSVM%2FUbuntu%2Fazuredeploy.json" target="_blank">
  -    <img src="http://azuredeploy.net/deploybutton.png"/>
  -</a>
 
-### Creating a DSVM for Linux (Ubuntu) using command line:
 
-To create a Ubuntu DSVM using Azure CLI Version 2 (ARM template - azuredeploy.json available in the CreateDSVM/Ubuntu directory and used below) use the steps below.
+### Deploy a DSVM for Linux (Ubuntu) with SSH key-based authentication using the portal
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FDataScienceVM%2Fmaster%2FScripts%2FCreateDSVM%2FUbuntu%2Fazuredeploysshkey.json" target="_blank">
+ -    <img src="http://azuredeploy.net/deploybutton.png"/>
+ -</a>
+
+
+## Creating a DSVM for Linux (Ubuntu) using the command line
+
+These steps show you how to create a Ubuntu DSVM using Azure CLI Version 2 with an ARM template. You need the [Azure CLI 2.0](https://docs.microsoft.com/cli/azure/install-az-cli2) on your desktop/laptop/VM. The DSVM automatically comes preinstalled with Azure CLI 2.0.
+
+These instructions use the azuredeploy.json template, which uses password authentication. Use the azuredeploysshkey.json template if you want SSH key-based authentication instead.
 
 Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The file looks like this:
 
@@ -28,18 +38,18 @@ Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The
   }
 }
 ````
-Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](CreateDSVM/Ubuntu/azuredeploy.json). 
+Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](azuredeploy.json). 
 
 Step 2: Use Azure CLI to create the VM
 
-    # Follow instructions of az login to signin to your Azure account. May need to select subscription if you have multiple
+    # Follow instructions of az login to signin to your Azure account. May need to select subscription if you have multiple subscriptions
     az login
     az group create --name [[NAME OF RESOURCE GROUP]] --location [[ Data center. For eg: "West US 2"]
     az group deployment create --resource-group  [[NAME OF RESOURCE GROUP ABOVE]]  --template-uri https://raw.githubusercontent.com/Azure/DataScienceVM/master/Scripts/CreateDSVM/Ubuntu/azuredeploy.json --parameters @[[PARAMETER JSON FILE]]
     
-### Creating multiple instances of DSVM for Linux (Ubuntu) using command line and execute a post install script on the VM Instance
+## Creating multiple instances of DSVM for Linux (Ubuntu) using command line and execute a post install script on the VM Instance
 
-To create multiple Ubuntu DSVMs in one shot using Azure CLI Version 2 (ARM template - multiazuredeploywithext.json available in the CreateDSVM/Ubuntu directory and used below) use the steps below. This also executes a post install bash script that can configure the VM to your needs or install any additional packages you want on the VM. 
+To create multiple Ubuntu DSVMs in one shot using Azure CLI Version 2, use the steps below. These use the ARM template multiazuredeploywithext.json. This also executes a post install bash script that can configure the VM to your needs or install any additional packages you want on the VM. 
 
 Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The file looks like this:
 
@@ -58,7 +68,7 @@ Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The
   }
 }
 ````
-Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](CreateDSVM/Ubuntu/multiazuredeploywithext.json). 
+Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Ubuntu DSVM ARM template](multiazuredeploywithext.json). 
 
 Step 2: Use the following Azure CLI to create VM(s)
 
