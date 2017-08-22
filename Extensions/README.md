@@ -1,1 +1,1 @@
-This directory will contain extensions for the Data Science VM. Extensions are post installscripts that layer additional utilities or config steps to the base DSVM. They can be deployed as post install scripts when the DSVM is being created. 
+This directory contains extensions for the Data Science VM. Extensions are post-install scripts that layer additional utilities or config steps to the base DSVM. They can be deployed as post-install scripts when the DSVM is created. 
