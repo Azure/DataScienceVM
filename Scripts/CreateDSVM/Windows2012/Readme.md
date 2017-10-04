@@ -4,7 +4,7 @@ Prerequisites: You need Azure CLI 2.0 on your desktop/laptop/VM. You can downloa
 
 ### Creating a DSVM for Windows using command line:
 
-To create a Windows DSVM using Azure CLI Version 2 (ARM template - azuredeploy.json available in the CreateDSVM/Windows2012 directory and used below) use the steps below.
+To create a Windows DSVM using Azure CLI Version 2 (ARM template - azuredeploy.json used below) use the steps below.
 
 
 Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The file looks like this:
@@ -21,7 +21,7 @@ Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The
   }
 }
 ````
-Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Windows DSVM ARM template](CreateDSVM/Windows2012/azuredeploy.json). 
+Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Windows DSVM ARM template](azuredeploy.json). 
 
 Step 2: Use Azure CLI to create the VM
 
@@ -32,7 +32,7 @@ Step 2: Use Azure CLI to create the VM
 
 ### Creating multiple instances of DSVM for Windows 2012 using command line and execute a post install script on the VM Instance
 
-To create multiple Windows 2012 DSVMs in one shot using Azure CLI Version 2 (ARM template - multiazuredeploywithext.json available in the CreateDSVM/Windows2012 directory and used below) use the steps below. This also executes a post install Powershell script that can configure the VM to your needs or install any additional packages you want on the VM. 
+To create multiple Windows 2012 DSVMs in one shot using Azure CLI Version 2 (ARM template - multiazuredeploywithext.json used below) use the steps below. This also executes a post install Powershell script that can configure the VM to your needs or install any additional packages you want on the VM. 
 
 Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The file looks like this:
 
@@ -51,7 +51,7 @@ Step 1: Create a Parameter file (JSON) for the DSVM you are going to deploy. The
   }
 }
 ````
-Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Windows 2012 DSVM ARM template](CreateDSVM/Windows2012/multiazuredeploywithext.json). 
+Replace the parameters with values you will use for your new DSVM you are creating. A list of allowed vmSize is found in the [Windows 2012 DSVM ARM template](multiazuredeploywithext.json). 
 
 Step 2: Use the following Azure CLI to create VM(s)
 
