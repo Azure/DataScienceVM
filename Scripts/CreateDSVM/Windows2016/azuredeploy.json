@@ -32,7 +32,8 @@
                 "Standard_DS4_v2",
                 "Standard_DS12_v2",
                 "Standard_DS13_v2",
-                "Standard_DS14_v2"
+                "Standard_DS14_v2",
+                "Standard_D4s_v3"
             ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
