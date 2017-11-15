@@ -1,0 +1,28 @@
+{
+    "properties": 
+    {
+        "nodeCount": 2,
+        "stdOutErrPathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/external/output",
+        "inputDirectories": [
+        {
+            "id": "SCRIPT",
+            "path": "$AZ_BATCHAI_MOUNT_ROOT/external/cifar10"
+        }],
+        "outputDirectories": [
+        {
+            "id": "MODEL",
+            "pathPrefix": "$AZ_BATCHAI_MOUNT_ROOT/external",
+            "pathSuffix": "Models"
+        }],
+        "cntkSettings": 
+        {
+            "pythonScriptFilePath": "$AZ_BATCHAI_INPUT_SCRIPT/CNTK_distributed.py",
+            "commandLineArgs": "--input_dir $AZ_BATCHAI_INPUT_SCRIPT/data --output_dir $AZ_BATCHAI_OUTPUT_MODEL",
+            "process_count": 1
+        },
+        "jobPreparation": 
+        {
+            "commandLine": "echo 'hi'"
+        }
+    }
+}
