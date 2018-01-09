@@ -23,7 +23,7 @@ To set up a workshop:
 
 It is easy to run out of GPU memory when multiple users are using the same GPU. You can use the *nvidia-smi* command to determine how much GPU memory a single example uses and how much total GPU memory is available; this will tell you how many users can run the example in parallel. You can reduce memory usage by reducing the batch size or reducing the size of the network (e.g., by removing layers).
 
-Once a Jupyter notebook is run, it will retain GPU memory until it is fully closed. If attendees will be running several notebooks, it is possible that the cumulative memory usage of all attendees on a VM across all running notebooks does not exceed the GPU's total memory. The easiest way to avoid this is to have attendees completely close each notebook by choosing *File* -> *Close and Halt* when they're finished with it.
+Once a Jupyter notebook is run, it will retain GPU memory until it is fully closed. If attendees will be running several notebooks, it is possible that the cumulative memory usage of all attendees on a VM across all running notebooks will exceed the GPU's total memory. The easiest way to avoid this is to have attendees completely close each notebook by choosing *File* -> *Close and Halt* when they're finished with it.
 
 TensorFlow will allocate all GPU memory for a single session by default. You can limit this in your code. Here we limit a session to 10% of the total GPU memory, so ten attendees could simultaneously run an example.
 
