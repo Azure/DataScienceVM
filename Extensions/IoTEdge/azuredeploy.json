@@ -227,7 +227,7 @@
 				  "fileUris": "[split(variables('fileUris'), ' ')]"
 				},
 	      "protectedSettings": {
-		         "commandToExecute": "[concat('HOME=~', parameters('adminUsername'), ' bash install.sh \"', parameters('deviceconnectionstring'), '\"')]"
+		         "commandToExecute": "[concat('bash install.sh \"', parameters('deviceconnectionstring'), '\" ', parameters('adminUsername'))]"
             }
 			  }
 			 }
