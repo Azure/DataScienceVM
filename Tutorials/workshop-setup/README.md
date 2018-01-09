@@ -1,11 +1,11 @@
 # Data Science and AI Workshops
-The DSVM team has run several large training workshops for data scientists and AI developers. Rather than asking users to install software on their laptops, we gave each attendee a login to an [Ubuntu DSVM](http://aka.ms/dsvm/ubuntu) with all training material and datasets pre-loaded and configured. All content was provided as Jupyter notebooks which were run through JupyterHub. Attendees needed only a web browser to access the training material. We found this approach to be simple to follow for attendees. It ensured that everyone used the same set of tools and gave everyone the opportunity to run code on a high-performance GPU. The workshops were extremely successful and had a very high rate of completion. Here we share details of setting up a workshop and some common pitfalls to avoid.
+The DSVM team has run several large training workshops (>100 attendees) for data scientists and AI developers. Rather than asking users to install software on their laptops, we gave each attendee a login to an [Ubuntu DSVM](http://aka.ms/dsvm/ubuntu) with all training material and datasets pre-loaded and configured. All content was provided as Jupyter notebooks, and attendees were able to run the notebooks through JupyterHub. Attendees needed only a laptop and a web browser to access the training material. We found this approach to be simple to follow for attendees. It ensured that everyone used the same set of tools and gave everyone the opportunity to run code on a high-performance GPU. The workshops were extremely successful and had a very high rate of completion. Here we share details of setting up a workshop and some common pitfalls to avoid.
 
 # Workshop Setup
 
 To set up a workshop:
 
-1. Prepare the training material and datasets on a single [Ubuntu DSVM](aka.ms/dsvm/ubuntu). Code should be Jupyter notebooks, as attendees will log in to the VMs through JupyterHub. JupyterHub also provides a terminal through the browser (choose New -> Terminal in the top-right corner). This can be used to run docker, nvidia-smi, and other tools.
+1. Prepare the training material and datasets on a single [Ubuntu DSVM](http://aka.ms/dsvm/ubuntu). Code should be Jupyter notebooks, as attendees will log in to the VMs through JupyterHub. JupyterHub also provides a terminal through the browser (choose New -> Terminal in the top-right corner). This can be used to run docker, nvidia-smi, and other tools.
 
 2. Put the material in a location that it can be transferred to the attendee VMs. We recommend putting everything in a single tar.gz file, uploading it to a container in blob storage, and generating a URL for the file. If you want to keep the container private, you can generate a SAS URL.
 
@@ -23,7 +23,7 @@ To set up a workshop:
 
 It is easy to run out of GPU memory when multiple users are using the same GPU. You can use the *nvidia-smi* command to determine how much GPU memory a single example uses and how much total GPU memory is available; this will tell you how many users can run the example in parallel. You can reduce memory usage by reducing the batch size or reducing the size of the network (e.g., by removing layers).
 
-Once a Jupyter notebook is run, it will retain GPU memory until it is fully closed. If attendees will be running several notebooks, you want to be sure that the cumulative memory usage of all attendees on a VM across all running notebooks does not exceed the GPU's total memory. The easiest way to do so is to have attendees completely close a notebook by choosing *File* -> *Close and Halt* when they're finished with it.
+Once a Jupyter notebook is run, it will retain GPU memory until it is fully closed. If attendees will be running several notebooks, it is possible that the cumulative memory usage of all attendees on a VM across all running notebooks does not exceed the GPU's total memory. The easiest way to avoid this is to have attendees completely close each notebook by choosing *File* -> *Close and Halt* when they're finished with it.
 
 TensorFlow will allocate all GPU memory for a single session by default. You can limit this in your code. Here we limit a session to 10% of the total GPU memory, so ten attendees could simultaneously run an example.
 
