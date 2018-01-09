@@ -227,11 +227,11 @@
 				  "fileUris": "[split(variables('fileUris'), ' ')]"
 				},
 	      "protectedSettings": {
-		         "commandToExecute": "[concat('bash install.sh ', parameters('deviceconnectionstring'))]"
-	      }        
+		         "commandToExecute": "[concat('bash install.sh \"', parameters('deviceconnectionstring'), '\"')]"
+            }
 			  }
 			 }
-			]					
+			]
         }
     ],
     "outputs": {
