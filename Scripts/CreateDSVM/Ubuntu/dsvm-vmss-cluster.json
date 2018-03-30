@@ -94,6 +94,27 @@
   },
   "resources": [
     {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+    },    
+    {
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('loadBalancerName')]",
       "location": "[variables('location')]",
