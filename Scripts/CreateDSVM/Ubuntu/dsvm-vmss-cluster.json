@@ -66,9 +66,13 @@
   "variables": {
     "location": "[resourceGroup().location]",
     "subnetName": "dsvmcluster",
-    "virtualNetworkName": "[concat(parameters('vmssName'), '-vnet')]",    
+    "virtualNetworkName": "[concat(parameters('vmssName'), '-vnet')]", 
+	"publicIPAddressName": "[concat(parameters('vmssName'), 'pip')]",	
+	"publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+	"addressPrefix": "10.0.0.0/16",
+    "subnetPrefix": "10.0.0.0/24",	
     "loadBalancerName": "[concat(parameters('vmssName'), 'lb')]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
     "natPoolName": "[concat(parameters('vmssName'), 'sshnat')]",
@@ -113,22 +117,33 @@
                     }
                 ]
             }
-    },    
+    },   
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('publicIPAddressName')]",
+      "location": "[variables('location')]",
+      "apiVersion": "2017-04-01",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },	
     {
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('loadBalancerName')]",
       "location": "[variables('location')]",
       "apiVersion": "2017-06-01",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+      ],	  
       "properties": {
         "frontendIPConfigurations": [
           {
             "name": "LoadBalancerFrontEnd",
             "properties":
             {
-                "subnet":
-                {
-                  "id": "[variables('subnetRef')]"
-                }
+               "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
             }
           }
         ],
