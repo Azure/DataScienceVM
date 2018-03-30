@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+     "adminUsername": {"value" : "dsvmuser"},
+     "adminPassword": { "value" :"GEN-PASSWORD" },
+     "vmssName": { "value" :"GEN-UNIQUE-8" },
+     "vmSku": { "value" :"Standard_D2s_v3" },
+     "storageAccountKey": { "value" :"ENTER-YO-KEY" },
+     "storageAccountName": { "value" :"ENTER-YO-STORAGEACCT"},
+     "instanceCount": { "value" : 2 }	 ,
+	 "shareName": { "value" : "YOUR-AZURE-FILES-SHARE"},
+	 "mountpointPath" : {"value" : "/mnt/dsvmshare"}
+  }
+}
