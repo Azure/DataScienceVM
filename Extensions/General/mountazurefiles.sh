@@ -11,7 +11,7 @@
 # For more details refer to https://azure.microsoft.com/en-us/documentation/articles/storage-how-to-use-files-linux/
 
 mkdir -p $4
-mount -t cifs //$1.file.core.windows.net/$3 $4 -o vers=3.0,username=$1,password=$2,dir_mode=0777,file_mode=0664
+mount -t cifs //$1.file.core.windows.net/$3 $4 -o vers=3.0,username=$1,password=$2,dir_mode=0777,file_mode=0777
 
 # create a symlink from /mountpath/xxx to ~username/xxx
 linkpoint=`echo $4 | sed 's/.*\///'`
