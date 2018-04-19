@@ -22,7 +22,7 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_D3_v2",
+            "defaultValue": "Standard_DS3_v2",
             "allowedValues": [
                "Basic_A3",
                 "Standard_A2_v2",
