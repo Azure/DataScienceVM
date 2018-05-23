@@ -41,3 +41,6 @@ for i in $(seq 1 5);  do
   echo user$u, $p >> '/data/usersinfo.csv';
   usermod -aG docker user$u
 done
+
+# install CNTK for ML Server's conda environment
+/data/mlserver/9.2.1/runtime/python/bin/pip install https://cntk.ai/PythonWheel/GPU/cntk-2.4-cp35-cp35m-linux_x86_64.whl
