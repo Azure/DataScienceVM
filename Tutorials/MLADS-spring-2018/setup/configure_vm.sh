@@ -16,6 +16,12 @@ mkdir /etc/skel/notebooks/MLADS-spring-2018
 git clone https://github.com/Azure/DataScienceVM /data/DataScienceVM
 mv /data/DataScienceVM/Tutorials/MLADS-spring-2018/* /etc/skel/notebooks/MLADS-spring-2018
 
+# update to the 390.46 driver
+wget -O nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb "https://dsvmbuildmaster.blob.core.windows.net/linux/nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb?st=2018-05-22T17%3A19%3A00Z&se=2018-06-24T17%3A19%3A00Z&sp=rl&sv=2017-07-29&sr=b&sig=0pqP%2FGhVoOUGh5cZQXx7HxvjH4NZO3OBwX69bAElUQU%3D"
+dpkg -i nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb
+apt-get update
+apt-get install cuda-drivers=390.46-1 -y
+
 # create users
 for i in $(seq 1 5);  do
   u=`openssl rand -hex 2`;
