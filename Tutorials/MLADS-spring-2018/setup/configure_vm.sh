@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# go ahead and download data so this step doesn't stall during the workshop
+wget -O /data/cifar-10-python.tar.gz http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+
 # tell Spark to use fewer resources so several users can submit simultaneous jobs
 sed -i -e 's/spark.driver.memory 5g/spark.driver.memory 1g/g' /dsvm/tools/spark/current/conf/spark-defaults.conf
 echo "spark.executor.cores 1" >> /dsvm/tools/spark/current/conf/spark-defaults.conf
@@ -44,3 +47,5 @@ done
 
 # install CNTK for ML Server's conda environment
 /data/mlserver/9.2.1/runtime/python/bin/pip install https://cntk.ai/PythonWheel/GPU/cntk-2.4-cp35-cp35m-linux_x86_64.whl
+
+reboot
