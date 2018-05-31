@@ -14,25 +14,22 @@ LR = 0.01
 MOMENTUM = 0.9
 N_CLASSES = 10
 
-def create_symbol():
-    # Weight initialiser from uniform distribution
-    # Activation (unless states) is None
-    with cntk.layers.default_options(init = cntk.glorot_uniform(), activation = cntk.relu):
-        x = Convolution2D(filter_shape=(3, 3), num_filters=50, pad=True)(features)
-        x = Convolution2D(filter_shape=(3, 3), num_filters=50, pad=True)(x)
-        x = MaxPooling((2, 2), strides=(2, 2), pad=False)(x)
-        x = Dropout(0.25)(x)
+def create_basic_model(input, out_dims):
+    with cntk.layers.default_options(init=cntk.glorot_uniform(), activation=cntk.relu):
+        net = cntk.layers.Convolution((5,5), 32, pad=True)(input)
+        net = cntk.layers.MaxPooling((3,3), strides=(2,2))(net)
 
-        x = Convolution2D(filter_shape=(3, 3), num_filters=100, pad=True)(x)
-        x = Convolution2D(filter_shape=(3, 3), num_filters=100, pad=True)(x)
-        x = MaxPooling((2, 2), strides=(2, 2), pad=False)(x)
-        x = Dropout(0.25)(x)
+        net = cntk.layers.Convolution((5,5), 32, pad=True)(net)
+        net = cntk.layers.MaxPooling((3,3), strides=(2,2))(net)
 
-        x = Dense(512)(x)
-        x = Dropout(0.5)(x)
-        x = Dense(N_CLASSES, activation=None)(x)
-        return x
-
+        net = cntk.layers.Convolution((5,5), 64, pad=True)(net)
+        net = cntk.layers.MaxPooling((3,3), strides=(2,2))(net)
+    
+        net = cntk.layers.Dense(64)(net)
+        net = cntk.layers.Dense(out_dims, activation=None)(net)
+    
+    return net
+  
 def init_model(m):
     progress_writers = [cntk.logging.ProgressPrinter(
         freq=int(BATCHSIZE / 2),
@@ -76,7 +73,7 @@ print(x_train.dtype, x_test.dtype, y_train.dtype, y_test.dtype)
 features = cntk.input_variable((3, 32, 32), np.float32)
 labels = cntk.input_variable(N_CLASSES, np.float32)
 # Load symbol
-sym = create_symbol()
+sym = create_basic_model(features, N_CLASSES)
 
 def save_model(model, learner, file_name):
     if learner.communicator().is_main():
@@ -93,7 +90,7 @@ for j in range(EPOCHS):
     
 z = cntk.softmax(sym)
 
-# save_model(sym, learner, "{}/cifar_final.model".format(args.output_dir))
+save_model(sym, learner, "{}/cifar_final.model".format(args.input_dir))
 
 n_samples = (y_test.shape[0]//BATCHSIZE)*BATCHSIZE
 y_guess = np.zeros(n_samples, dtype=np.int)
