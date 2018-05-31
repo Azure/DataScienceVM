@@ -23,7 +23,7 @@ apt-get update
 apt-get install cuda-drivers=390.46-1 -y
 
 # create users
-for i in $(seq 1 3);  do
+for i in $(seq 1 4);  do
   u=`openssl rand -hex 2`;
   # replace 1 with g
   u=`echo $u | sed -e 's/1/g/g'`
