@@ -22,6 +22,7 @@ for filename in /home/*; do
   user=${filename:6}
   cp -r /etc/skel/notebooks/MLADS-spring-2018 $dir
   chown -R $user $dir/MLADS-spring-2018/*
+  chown $user $dir/MLADS-spring-2018
 done
 
 # update to the 390.46 driver
