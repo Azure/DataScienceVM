@@ -6,7 +6,7 @@ This tutorial was presented at MLADS (Machine Learning and Data Science), Micros
 2. Building an image classifier using the Microsoft Cognitive Toolkit
 3. Deploying the model as a REST API using Microsoft ML Server
 
-You can run this tutorial on your own Ubuntu DSVM. Create a VM using the ARM template in the *setup* folder, *git clone* this repo to the notebooks directory in your home directory, log in to JupyterHub, and navigate to thi directory. The Jupyter notebooks are designed to be easy to follow along.
+You can run this tutorial on your own Ubuntu DSVM by deploying the ARM template in the *setup* directory. Once your VM is created, log in to JupyterHub and navigate to the *MLADS-spring-2018* directory. The Jupyter notebooks are designed to be easy to follow along.
 
 ## Other components
 
