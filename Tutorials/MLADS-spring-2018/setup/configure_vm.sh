@@ -19,7 +19,9 @@ mv /data/DataScienceVM/Tutorials/MLADS-spring-2018/* /etc/skel/notebooks/MLADS-s
 # copy the notebooks to the initial user's profile
 for filename in /home/*; do
   dir=$filename/notebooks
+  user=${filename:6}
   cp -r /etc/skel/notebooks/MLADS-spring-2018 $dir
+  chown -R $user $dir/MLADS-spring-2018/*
 done
 
 # update to the 390.46 driver
