@@ -13,4 +13,4 @@ echo $1 | tee "/home/$2/.hubName.txt"
 dir_path="/home/$2/IotEdge"
 file_path="/home/$2/IotEdge/edge_configure.sh"
 mkdir $dir_path
-curl https://raw.githubusercontent.com/Xeanor-V/Automation/master/edge_configure.sh > $file_path
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/edge_configure.sh > $file_path

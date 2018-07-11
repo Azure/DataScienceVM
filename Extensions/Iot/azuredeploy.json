@@ -84,7 +84,7 @@
         "virtualNetworkName": "[parameters('vmName')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "https://raw.githubusercontent.com/Xeanor-V/Automation/master/configure_vm.sh",
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/configure_vm.sh",
         "hubExists": "[parameters('hubExists')]",
         "iotHubName": "[parameters('iotHubName')]",
         "command": "bash configure_vm.sh ",
