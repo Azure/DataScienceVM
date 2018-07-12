@@ -77,7 +77,7 @@
         "storageAccountType": "Standard_LRS",
         "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
-        "publicIPAddressName": "[parameters('vmName')]",
+        "publicIPAddressName": "[concat('dsvm-',toLower(parameters('vmName') ) )]",
         "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
