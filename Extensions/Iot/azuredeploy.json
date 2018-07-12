@@ -65,7 +65,7 @@
     "variables": {
         "location": "[resourceGroup().location]",
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
-        "imagePublisher": "microsoft-ads",
+        "imagePublisher": "microsoft-dsvm",
         "imageOffer": "linux-data-science-vm-ubuntu",
         "OSDiskName": "osdiskforlinuxsimple",
         "DataDiskName": "datadiskforlinuxsimple",
@@ -112,10 +112,7 @@
                 "count": "[variables('numberOfInstances')]"
             },
             "properties": {
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
-                "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('publicIPAddressName'), copyindex())]"
-                }
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }
         },
         {
@@ -192,11 +189,6 @@
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[variables('numberOfInstances')]"
-            },
-            "plan": {
-                "name": "[variables('sku')]",
-                "product": "[variables('imageOffer')]",
-                "publisher": "[variables('imagePublisher')]"
             },
             "tags": {
                 "Application": "DataScience"
