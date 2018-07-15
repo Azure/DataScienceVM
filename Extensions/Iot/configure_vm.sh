@@ -14,3 +14,4 @@ dir_path="/home/$2/IotEdge"
 file_path="/home/$2/IotEdge/edge_configure.sh"
 mkdir $dir_path
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/edge_configure.sh > $file_path
+chmod 777 $file_path
