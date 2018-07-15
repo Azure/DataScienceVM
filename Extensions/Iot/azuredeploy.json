@@ -67,8 +67,8 @@
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
         "imagePublisher": "microsoft-dsvm",
         "imageOffer": "linux-data-science-vm-ubuntu",
-        "OSDiskName": "osdiskforlinuxsimple",
-        "DataDiskName": "datadiskforlinuxsimple",
+        "OSDiskName": "[concat(parameters('vmName'),'-osdisk')]",
+        "DataDiskName": "[concat(parameters('vmName'),'-data-0')]",
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
@@ -214,13 +214,13 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "osdisk",
+                        "name": "[variables('OSDiskName')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "name": "data-0",
+                            "name": "[variables('DataDiskName')]",
                             "createOption": "fromImage",
                             "lun": 0
                         }
