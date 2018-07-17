@@ -2,7 +2,7 @@
 # Getting user paths
 source /etc/profile
 # Installing JQ
-apt-get install jq
+apt-get install -y jq
 # Updating Azure CLI 
 /anaconda/envs/py35/bin/pip install --upgrade pip
 /anaconda/envs/py35/bin/pip install --ignore-installed azure-cli
