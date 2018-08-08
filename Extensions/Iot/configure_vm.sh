@@ -3,9 +3,6 @@
 source /etc/profile
 # Installing JQ
 apt-get install -y jq
-# Updating Azure CLI 
-/anaconda/envs/py35/bin/pip install --upgrade pip
-/anaconda/envs/py35/bin/pip install --ignore-installed azure-cli
 # Installing Edge Runtime 
 apt-get update -y
 apt-get install -y iotedge
