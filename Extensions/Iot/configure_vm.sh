@@ -1,11 +1,9 @@
 #!/bin/bash
 # Getting user paths
 source /etc/profile
-# Installing JQ
-apt-get install -y jq
 # Installing Edge Runtime 
 apt-get update -y
-apt-get install -y iotedge
+apt-get install -y iotedge azure-cli jq  
 # Saving name of Iot Hub for later config
 echo $1 | tee "/home/$2/.hubName.txt"
 # Saving Vm info for later config
