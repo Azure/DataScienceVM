@@ -2,7 +2,7 @@
 # Getting user paths
 source /etc/profile
 # Updating cli
-apt install azure-cli  -y
+apt install azure-cli  -y --allow-change-held-packages
 # Installing jq
 apt install jq -y
 # Installing Edge Runtime 
