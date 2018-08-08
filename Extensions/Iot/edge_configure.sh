@@ -8,9 +8,9 @@ subid="$(cat /home/$user/.vminfo.json  | jq '.compute.subscriptionId')"
 subid="${subid%\"}"
 subid="${subid#\"}"
 # Installing extension
-az extension add --name azure-cli-iot-ext
+sudo -i az extension add --name azure-cli-iot-ext
 # CLI Login
-az login --use-device-code
+az login 
 az account set -s $subid
 # Register edge device 
 az iot hub device-identity create --device-id $device --hub-name $hubName --edge-enabled
