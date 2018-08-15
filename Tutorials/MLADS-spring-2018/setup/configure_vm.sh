@@ -25,13 +25,6 @@ for filename in /home/*; do
   chown $user $dir/MLADS-spring-2018
 done
 
-# update to the 390.46 driver
-cd /mnt
-wget -O nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb "https://dsvmbuildmaster.blob.core.windows.net/linux/nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb?st=2018-07-02T17%3A54%3A19Z&se=2019-07-03T17%3A54%3A00Z&sp=rl&sv=2017-07-29&sr=b&sig=mWLGzaNkyLxh4rWqp2XYBz0kKsCUj8Zx8VLDfqUb1bE%3D"
-dpkg -i nvidia-diag-driver-local-repo-ubuntu1604-390.46_1.0-1_amd64.deb
-apt-get update
-apt-get install cuda-drivers=390.46-1 -y
-
 # create users
 # we are skipping this part now that MLADS is over, and most people using this template want
 # to use it with the initial user account
@@ -56,5 +49,3 @@ apt-get install cuda-drivers=390.46-1 -y
 
 # install CNTK for ML Server's conda environment
 /data/mlserver/9.2.1/runtime/python/bin/pip install https://cntk.ai/PythonWheel/GPU/cntk-2.4-cp35-cp35m-linux_x86_64.whl
-
-reboot
