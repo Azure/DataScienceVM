@@ -9,7 +9,7 @@
             }
         },
         "adminPassword": {
-            "type": "securestring",
+            "type": "string",
             "metadata": {
                 "description": "Password for the Virtual Machine."
             }
@@ -84,10 +84,10 @@
         "virtualNetworkName": "[parameters('vmName')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/configure_vm.sh",
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/vm_configure.sh",
         "hubExists": "[parameters('hubExists')]",
         "iotHubName": "[parameters('iotHubName')]",
-        "command": "bash configure_vm.sh ",
+        "command": "bash vm_configure.sh ",
         "adminUsername": "[parameters('adminUsername')]",
         "scriptParameters": "[concat(variables('iotHubName'),' ',variables('adminUsername'))]",
         "commandToExecute": "[concat(variables('command'),variables('scriptParameters'))]"
