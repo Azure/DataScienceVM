@@ -6,6 +6,6 @@ The extension will create an VM provisioned with the IoT Edge runtime, it can be
 
 Click the button below to create a Data Science VM and add-on the IoT Edge Runtime components.
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FDataScienceVM%2Fmaster%2FExtensions%2FIot%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FDataScienceVM%2Fmaster%2FExtensions%2FIoT%2Fazuredeploy.json" target="_blank">
  -    <img src="http://azuredeploy.net/deploybutton.png"/>
  -</a>
