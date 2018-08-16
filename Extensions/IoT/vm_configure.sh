@@ -12,7 +12,7 @@ chmod 777 /home/$2/IoT
 dir_path="/home/$2/IoT/IotEdge"
 file_path="/home/$2/IoT/IotEdge/edge_configure.sh"
 mkdir $dir_path
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/edge_configure.sh > $file_path
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/edge_configure.sh > $file_path
 chmod 777 $file_path
 chmod 777 $dir_path
 # Installing IoT Tools and SDKS
@@ -38,23 +38,23 @@ cp "$dir_path/azure-iot-sdk-c/tools/CACertificates/certGen.sh" $dir_path
 chmod 777 "$dir_path/certGen.sh" 
 # Installing gateway configuration file
 file_path="/home/$2/IoT/IotEdge/gateway/gateway_configure.sh"
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/gateway_configure.sh > $file_path
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/gateway_configure.sh > $file_path
 chmod 777 $file_path
 # Installing CLI Extension
 az extension add --name azure-cli-iot-ext
 # Adding Notebooks 
 dir_path="/home/$2/notebooks/IoT"
 mkdir $dir_path
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Notebooks/AzureServices.ipynb > "$dir_path/AzureServices.ipynb"
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Notebooks/ObtainingIoTData.ipynb > "$dir_path/ObtainingIoTData.ipynb"
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Notebooks/ProcessingIoTData.ipynb > "$dir_path/ProcessingIoTData.ipynb"
-curl https://raw.githubusercontent.com//Azure/DataScienceVM/master/Extensions/Iot/Notebooks/SettingUpEdge.ipynb > "$dir_path/SettingUpEdge.ipynb"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/AzureServices.ipynb > "$dir_path/AzureServices.ipynb"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/ObtainingIoTData.ipynb > "$dir_path/ObtainingIoTData.ipynb"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/ProcessingIoTData.ipynb > "$dir_path/ProcessingIoTData.ipynb"
+curl https://raw.githubusercontent.com//Azure/DataScienceVM/master/Extensions/IoT/Notebooks/SettingUpEdge.ipynb > "$dir_path/SettingUpEdge.ipynb"
 # Adding Container files
 dir_path="/home/$2/IoT/IotEdge/gateway/sniffer"
 mkdir $dir_path
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Extractor_Module/main.py > "$dir_path/main.py"
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Extractor_Module/Dockerfile > "$dir_path/Dockerfile"
-curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/Iot/Extractor_Module/requirements.txt > "$dir_path/requirements.txt"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Extractor_Module/main.py > "$dir_path/main.py"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Extractor_Module/Dockerfile > "$dir_path/Dockerfile"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Extractor_Module/requirements.txt > "$dir_path/requirements.txt"
 # Installing VScode extensions
 sudo -u $2 code --install-extension vsciot-vscode.vscode-iot-workbench
 sudo -u $2 code --install-extension vsciot-vscode.azure-iot-edge
