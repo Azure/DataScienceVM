@@ -58,20 +58,6 @@ def receive_message_callback(message, hubManager):
     return IoTHubMessageDispositionResult.ACCEPTED
 
 
-# module_twin_callback is invoked when the module twin's desired properties are updated.
-def module_twin_callback(update_state, payload, user_context):
-    global TWIN_CALLBACKS
-    global TEMPERATURE_THRESHOLD
-    print ( "\nTwin callback called with:\nupdateStatus = %s\npayload = %s\ncontext = %s" % (update_state, payload, user_context) )
-    data = json.loads(payload)
-    if "desired" in data and "TemperatureThreshold" in data["desired"]:
-        TEMPERATURE_THRESHOLD = data["desired"]["TemperatureThreshold"]
-    if "TemperatureThreshold" in data:
-        TEMPERATURE_THRESHOLD = data["TemperatureThreshold"]
-    TWIN_CALLBACKS += 1
-    print ( "Total calls confirmed: %d\n" % TWIN_CALLBACKS )
-
-
 class HubManager(object):
 
     def __init__(
@@ -80,9 +66,6 @@ class HubManager(object):
         self.client_protocol = protocol
         self.client = IoTHubModuleClient()
         self.client.create_from_environment(protocol)
-
-        # Sets the callback when a module twin's desired properties are updated.
-        ## self.client.set_module_twin_callback(module_twin_callback, self)
 
         # set the time until a message times out
         self.client.set_option("messageTimeout", MESSAGE_TIMEOUT)
@@ -99,9 +82,9 @@ class HubManager(object):
 def main(protocol):
     try:
         print ( "\nPython %s\n" % sys.version )
-        print ( "EdgeHub Sniffer for Python" )
+        print ( "EdgeHub Extractor for Python" )
         hub_manager = HubManager(protocol)
-        print ( "Starting the IoT Hub Python sample using protocol %s..." % hub_manager.client_protocol )
+        print ( "Starting the Extractor using protocol %s..." % hub_manager.client_protocol )
         while True:
             time.sleep(1)
 
@@ -109,7 +92,7 @@ def main(protocol):
         print ( "Unexpected error %s from IoTHub" % iothub_error )
         return
     except KeyboardInterrupt:
-        print ( "IoTHubModuleClient sample stopped" )
+        print ( "Extractor  stopped" )
 
 if __name__ == '__main__':
     main(PROTOCOL)
