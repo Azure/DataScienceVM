@@ -48,9 +48,9 @@ mkdir $dir_path
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/AzureServices.ipynb > "$dir_path/AzureServices.ipynb"
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/ObtainingIoTData.ipynb > "$dir_path/ObtainingIoTData.ipynb"
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/ProcessingIoTData.ipynb > "$dir_path/ProcessingIoTData.ipynb"
-curl https://raw.githubusercontent.com//Azure/DataScienceVM/master/Extensions/IoT/Notebooks/SettingUpEdge.ipynb > "$dir_path/SettingUpEdge.ipynb"
+curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Notebooks/SettingUpEdge.ipynb > "$dir_path/SettingUpEdge.ipynb"
 # Adding Container files
-dir_path="/home/$2/IoT/IotEdge/gateway/sniffer"
+dir_path="/home/$2/IoT/IotEdge/gateway/extractor_module"
 mkdir $dir_path
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Extractor_Module/main.py > "$dir_path/main.py"
 curl https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/Extractor_Module/Dockerfile > "$dir_path/Dockerfile"
