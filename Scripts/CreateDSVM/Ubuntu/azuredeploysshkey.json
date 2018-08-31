@@ -9,11 +9,11 @@
             }
         },
         "sshKeyData": {
-      	    "type": "string",
-            "metadata": {
-                "description": "SSH public key data as a string."
-            }
-        },
+            "type": "string",
+          "metadata": {
+              "description": "SSH public key data as a string."
+          }
+      },
         "vmName": {
             "type": "string",
             "metadata": {
@@ -23,21 +23,6 @@
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_DS3_v2",
-            "allowedValues": [
-                "Basic_A3",
-                "Standard_A2_v2",
-                "Standard_A4_v2",
-                "Standard_A8_v2",
-                "Standard_DS2_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS12_v2",
-                "Standard_DS13_v2",
-                "Standard_DS14_v2",
-                "Standard_NC6",
-                "Standard_NC12",
-                "Standard_NC24"
-            ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
@@ -45,20 +30,17 @@
     },
     "variables": {
         "location": "[resourceGroup().location]",
-        "imagePublisher": "microsoft-ads",
+        "imagePublisher": "microsoft-dsvm",
         "imageOffer": "linux-data-science-vm-ubuntu",
-        "OSDiskName": "osdiskforlinuxsimple",
-        "DataDiskName": "datadiskforlinuxsimple",
+        "OSDiskName": "[concat(parameters('vmName'),'-osdisk')]",
+        "DataDiskName": "[concat(parameters('vmName'),'-data-0')]",
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
-        "storageAccountType": "Standard_LRS",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
-        "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
@@ -67,15 +49,6 @@
         "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
-            }
-        },
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -136,20 +109,14 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('vmName')]",
-            "location": "[variables('location')]",
-            "plan": {
-                "name": "[variables('sku')]",
-                "product": "[variables('imageOffer')]",
-                "publisher": "[variables('imagePublisher')]"
-            },            
+            "location": "[variables('location')]",         
             "tags": {
                 "Application": "DataScience"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
             ],
             "properties": {
@@ -160,16 +127,16 @@
                     "computerName": "[variables('vmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "linuxConfiguration": {
-			"disablePasswordAuthentication": "true",
-			"ssh": {
-			    "publicKeys": [
-				{
-				    "path": "[variables('sshKeyPath')]",
-				    "keyData": "[parameters('sshKeyData')]"
-				}
-			    ]
-			}
-		    }
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                            {
+                                "path": "[variables('sshKeyPath')]",
+                                "keyData": "[parameters('sshKeyData')]"
+                            }
+                            ]
+                        }
+                        }
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -179,20 +146,19 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'), variables('vmName'),  '.vhd')]"
-                        },
-                        "caching": "ReadWrite",
+                        "name": "[variables('OSDiskName')]",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"           
+                          },
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "name": "data-0",
-                            "vhd": {
-                                "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('DataDiskName'), variables('vmName'), '.vhd')]"
-                            },
-                            "createOption": "fromImage",
+                            "name": "[variables('DataDiskName')]",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"           
+                              },
+                            "createOption": "FromImage",
                             "lun": 0
                         }
                     ]
@@ -206,8 +172,7 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": "true",
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                        "enabled": false
                     }
                 }
             }
