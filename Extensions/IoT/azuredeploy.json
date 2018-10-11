@@ -29,46 +29,79 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_DS3_v2",
+            "defaultValue": "Standard_DS2_v2",
+            "allowedValues": [
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS12_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2",
+                "Standard_NC6",
+                "Standard_NC12",
+                "Standard_NC24"
+            ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
         },
-		"fileUris": {
-            "type": "string",
+        "hubExists": {
+            "type": "String",
+            "allowedValues": [
+                "new",
+                "existing"
+            ],
             "metadata": {
-                "description": "URL of the extension package or file"
+                "description": "Use an existing Iot hub or create a new one"
             }
         },
-		"commandToExecute": {
+        "iotHubName": {
             "type": "string",
-            "defaultValue": "install.sh",
             "metadata": {
-                "description": "Extension bash script command to execute"
+                "description": "Name for the Iot hub."
             }
-        }        
+        }
     },
     "variables": {
         "location": "[resourceGroup().location]",
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
         "imagePublisher": "microsoft-dsvm",
-        "imageOffer": "linux-data-science-vm-ubuntu",            
+        "imageOffer": "linux-data-science-vm-ubuntu",
+        "OSDiskName": "[concat(parameters('vmName'),'-osdisk')]",
+        "DataDiskName": "[concat(parameters('vmName'),'-data-0')]",
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
+        "storageAccountType": "Standard_LRS",
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
-        "publicIPAddressName": "[parameters('vmName')]",
+        "publicIPAddressName": "[concat('dsvm-',toLower(parameters('vmName') ) )]",
+        "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "[parameters('fileUris')]",
-        "commandToExecute": "[concat('bash ', parameters('commandToExecute'))]"        
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/vm_configure.sh",
+        "hubExists": "[parameters('hubExists')]",
+        "iotHubName": "[parameters('iotHubName')]",
+        "command": "bash vm_configure.sh ",
+        "adminUsername": "[parameters('adminUsername')]",
+        "scriptParameters": "[concat(variables('iotHubName'),' ',variables('adminUsername'))]",
+        "commandToExecute": "[concat(variables('command'),variables('scriptParameters'))]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[variables('location')]",
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -79,10 +112,7 @@
                 "count": "[variables('numberOfInstances')]"
             },
             "properties": {
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
-                "dnsSettings": {
-                    "domainNameLabel": "[concat(variables('publicIPAddressName'), copyindex())]"
-                }
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }
         },
         {
@@ -137,6 +167,21 @@
             }
         },
         {
+            "condition": "[equals(variables('hubExists'), 'new')]",
+            "apiVersion": "2016-02-03",
+            "type": "Microsoft.Devices/IotHubs",
+            "name": "[variables('iotHubName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "location": "[variables('location')]"
+            }
+        },
+        {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmName'), copyIndex())]",
@@ -149,6 +194,7 @@
                 "Application": "DataScience"
             },
             "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyindex())]"
             ],
             "properties": {
@@ -168,20 +214,17 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "managedDisk": {
-                            "storageAccountType": "Standard_LRS"           
-                          },
+                        "name": "[variables('OSDiskName')]",
+                        "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "managedDisk": {
-                                "storageAccountType": "Standard_LRS"           
-                              },
-                            "createOption": "FromImage",
+                            "name": "[variables('DataDiskName')]",
+                            "createOption": "fromImage",
                             "lun": 0
                         }
-                    ]                    
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -192,35 +235,42 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": false
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
                     }
                 }
             },
-			"resources": [
+            "resources": [
                 {
-                 "type": "extensions",
-                 "name": "[variables('vmName')]",
-                 "apiVersion": "2017-03-30",
-                 "location": "[variables('location')]",
-                 "dependsOn": [
-                   "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
-                 ],
-                 "properties": {
-                   "publisher": "Microsoft.OSTCExtensions",
-                   "type": "CustomScriptForLinux",
-                   "typeHandlerVersion": "1.4",
-                   "autoUpgradeMinorVersion": true,
-                   "settings": {
-                     "fileUris": "[split(variables('fileUris'), ' ')]",
-                     "commandToExecute": "[variables('commandToExecute')]"
-                   }
-                 }
+                    "type": "extensions",
+                    "name": "[variables('vmName')]",
+                    "apiVersion": "2015-06-15",
+                    "location": "[variables('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": "[split(variables('fileUris'), ' ')]",
+                            "commandToExecute": "[variables('commandToExecute')]"
+                        }
+                    }
                 }
-               ]            
+            ]
         }
     ],
     "outputs": {
-        "firstDataScienceVmUrl": { "type": "string", "value": "[concat('https://ms.portal.azure.com/#resource/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachines/', variables('vmName'), '0')]" },
-        "numInstances": { "type": "string", "value": "[parameters('numberOfInstances')]" }
+        "firstDataScienceVmUrl": {
+            "type": "string",
+            "value": "[concat('https://ms.portal.azure.com/#resource/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachines/', variables('vmName'), '0')]"
+        },
+        "numInstances": {
+            "type": "string",
+            "value": "[parameters('numberOfInstances')]"
+        }
     }
 }

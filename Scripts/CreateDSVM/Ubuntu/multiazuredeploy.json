@@ -30,21 +30,6 @@
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_DS3_v2",
-            "allowedValues": [
-                "Basic_A3",
-                "Standard_A2_v2",
-                "Standard_A4_v2",
-                "Standard_A8_v2",
-                "Standard_DS2_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS12_v2",
-                "Standard_DS13_v2",
-                "Standard_DS14_v2",
-                "Standard_NC6",
-                "Standard_NC12",
-                "Standard_NC24"
-            ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
@@ -53,20 +38,15 @@
     "variables": {
         "location": "[resourceGroup().location]",
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
-        "imagePublisher": "microsoft-ads",
-        "imageOffer": "linux-data-science-vm-ubuntu",        
-        "OSDiskName": "osdiskforlinuxsimple",
-        "DataDiskName": "datadiskforlinuxsimple",        
+        "imagePublisher": "microsoft-dsvm",
+        "imageOffer": "linux-data-science-vm-ubuntu",            
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
-        "storageAccountType": "Standard_LRS",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
-        "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
@@ -74,15 +54,6 @@
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[variables('location')]",
-            "properties": {
-                "accountType": "[variables('storageAccountType')]"
-            }
-        },
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -151,7 +122,7 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmName'), copyIndex())]",
             "location": "[variables('location')]",
@@ -159,16 +130,10 @@
                 "name": "virtualMachineLoop",
                 "count": "[variables('numberOfInstances')]"
             },
-            "plan": {
-                "name": "[variables('sku')]",
-                "product": "[variables('imageOffer')]",
-                "publisher": "[variables('imagePublisher')]"
-            },
             "tags": {
                 "Application": "DataScience"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyindex())]"
             ],
             "properties": {
@@ -188,20 +153,17 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'), variables('vmName'), copyIndex(), '.vhd')]"
-                        },
-                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"           
+                          },
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "name": "data-0",
-                            "vhd": {
-                              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('DataDiskName'), variables('vmName'), copyIndex(),  '.vhd')]"
-                            },
-                            "createOption": "fromImage",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"           
+                              },
+                            "createOption": "FromImage",
                             "lun": 0
                         }
                     ]                    
@@ -215,8 +177,7 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": "true",
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                        "enabled": false
                     }
                 }
             }

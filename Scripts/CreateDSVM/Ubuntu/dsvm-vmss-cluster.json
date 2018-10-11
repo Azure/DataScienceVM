@@ -86,7 +86,7 @@
     "lbProbeIDjupyter": "[concat(variables('lbID'),'/probes/Jupyterprobe')]",    
     "lbProbeIDssh": "[concat(variables('lbID'),'/probes/sshprobe')]",        
     "osType": {
-        "publisher": "microsoft-ads",
+        "publisher": "microsoft-dsvm",
         "offer": "linux-data-science-vm-ubuntu",
         "sku": "linuxdsvmubuntu",
         "version": "latest"
@@ -220,11 +220,6 @@
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[parameters('vmssName')]",
       "location": "[variables('location')]",
-      "plan": {
-        "name": "linuxdsvmubuntu",
-        "publisher": "microsoft-ads",
-        "product": "linux-data-science-vm-ubuntu"
-      },
       "apiVersion": "2017-03-30",
       "dependsOn": [
         "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]"

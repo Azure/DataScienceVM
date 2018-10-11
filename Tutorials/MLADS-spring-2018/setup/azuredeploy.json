@@ -29,46 +29,58 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_DS3_v2",
+            "defaultValue": "Standard_NC6",
+            "allowedValues": [
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS12_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2",
+                "Standard_NC6",
+                "Standard_NC12",
+                "Standard_NC24"
+            ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
-        },
-		"fileUris": {
-            "type": "string",
-            "metadata": {
-                "description": "URL of the extension package or file"
-            }
-        },
-		"commandToExecute": {
-            "type": "string",
-            "defaultValue": "install.sh",
-            "metadata": {
-                "description": "Extension bash script command to execute"
-            }
-        }        
+        }
     },
     "variables": {
         "location": "[resourceGroup().location]",
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
-        "imagePublisher": "microsoft-dsvm",
-        "imageOffer": "linux-data-science-vm-ubuntu",            
+        "imagePublisher": "microsoft-ads",
+        "imageOffer": "linux-data-science-vm-ubuntu",        
+        "OSDiskName": "osdiskforlinuxsimple",
+        "DataDiskName": "datadiskforlinuxsimple",        
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
+        "storageAccountType": "Standard_LRS",
+        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
+        "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "[parameters('fileUris')]",
-        "commandToExecute": "[concat('bash ', parameters('commandToExecute'))]"        
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Tutorials/MLADS-spring-2018/setup/configure_vm.sh",
+        "commandToExecute": "bash configure_vm.sh"
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[variables('location')]",
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -137,7 +149,7 @@
             }
         },
         {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmName'), copyIndex())]",
             "location": "[variables('location')]",
@@ -145,10 +157,16 @@
                 "name": "virtualMachineLoop",
                 "count": "[variables('numberOfInstances')]"
             },
+            "plan": {
+                "name": "[variables('sku')]",
+                "product": "[variables('imageOffer')]",
+                "publisher": "[variables('imagePublisher')]"
+            },
             "tags": {
                 "Application": "DataScience"
             },
             "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyindex())]"
             ],
             "properties": {
@@ -168,17 +186,20 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "managedDisk": {
-                            "storageAccountType": "Standard_LRS"           
-                          },
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'), variables('vmName'), copyIndex(), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "managedDisk": {
-                                "storageAccountType": "Standard_LRS"           
-                              },
-                            "createOption": "FromImage",
+                            "name": "data-0",
+                            "vhd": {
+                              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('DataDiskName'), variables('vmName'), copyIndex(),  '.vhd')]"
+                            },
+                            "createOption": "fromImage",
                             "lun": 0
                         }
                     ]                    
@@ -192,31 +213,32 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": false
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
                     }
                 }
             },
 			"resources": [
-                {
-                 "type": "extensions",
-                 "name": "[variables('vmName')]",
-                 "apiVersion": "2017-03-30",
-                 "location": "[variables('location')]",
-                 "dependsOn": [
-                   "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
-                 ],
-                 "properties": {
-                   "publisher": "Microsoft.OSTCExtensions",
-                   "type": "CustomScriptForLinux",
-                   "typeHandlerVersion": "1.4",
-                   "autoUpgradeMinorVersion": true,
-                   "settings": {
-                     "fileUris": "[split(variables('fileUris'), ' ')]",
-                     "commandToExecute": "[variables('commandToExecute')]"
-                   }
-                 }
-                }
-               ]            
+			 {
+			  "type": "extensions",
+			  "name": "[variables('vmName')]",
+			  "apiVersion": "2015-06-15",
+			  "location": "[variables('location')]",
+			  "dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
+			  ],
+			  "properties": {
+				"publisher": "Microsoft.OSTCExtensions",
+				"type": "CustomScriptForLinux",
+				"typeHandlerVersion": "1.4",
+				"autoUpgradeMinorVersion": true,
+				"settings": {
+				  "fileUris": "[split(variables('fileUris'), ' ')]",
+				  "commandToExecute": "[variables('commandToExecute')]"
+				}
+			  }
+			 }
+			]			
         }
     ],
     "outputs": {
