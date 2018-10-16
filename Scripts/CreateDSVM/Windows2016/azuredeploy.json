@@ -22,19 +22,7 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_D3_v2",
-            "allowedValues": [
-               "Basic_A3",
-                "Standard_A2_v2",
-                "Standard_A4_v2",
-                "Standard_A8_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS12_v2",
-                "Standard_DS13_v2",
-                "Standard_DS14_v2",
-                "Standard_D4s_v3"
-            ],
+            "defaultValue": "Standard_DS3_v2",
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
@@ -42,35 +30,53 @@
     },
     "variables": {
         "location": "[resourceGroup().location]",
-        "imagePublisher": "microsoft-ads",
-        "imageOffer": "windows-data-science-vm",
-        "OSDiskName": "osdiskforwindowssimple",
-        "sku": "windows2016",
+        "imagePublisher": "microsoft-dsvm",
+        "imageOffer": "dsvm-windows",
+        "sku": "server-2016",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
         "storageAccountType": "Standard_LRS",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'windsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
         "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
+        "nsgName": "[concat(parameters('vmName'),'-nsg')]",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",        
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]"
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2015-05-01-preview",
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
             "location": "[variables('location')]",
+            "name": "[variables('nsgName')]",
             "properties": {
-                "accountType": "[variables('storageAccountType')]"
+                "securityRules": [
+                    {
+                        "name": "Allow-RDP",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "3389"
+                            ],
+                            "destinationPortRange": ""
+                        }
+                    }
+                ]
             }
-        },
+        },        
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -88,6 +94,9 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+              ],            
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -111,6 +120,7 @@
             "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]",                
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
             ],
             "properties": {
@@ -127,24 +137,21 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }	
             }
         },
         {
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('vmName')]",
             "location": "[variables('location')]",
-            "plan": {
-                "name": "windows2016",
-                "publisher": "microsoft-ads",
-                "product": "windows-data-science-vm"
-            },
             "tags": {
                 "Application": "DataScience"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
             ],
             "properties": {
@@ -164,11 +171,9 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'), variables('vmName'),  '.vhd')]"
-                        },
-                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storageAccountType')]"           
+                          },
                         "createOption": "FromImage"
                     }
                 },
@@ -181,8 +186,7 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": "true",
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                        "enabled": false
                     }
                 }
             }
