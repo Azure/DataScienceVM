@@ -30,23 +30,12 @@
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_DS2_v2",
-            "allowedValues": [
-                "Standard_DS2_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS12_v2",
-                "Standard_DS13_v2",
-                "Standard_DS14_v2",
-                "Standard_NC6",
-                "Standard_NC12",
-                "Standard_NC24"
-            ],
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
         },
         "hubExists": {
-            "type": "String",
+            "type": "string",
             "allowedValues": [
                 "new",
                 "existing"
@@ -67,21 +56,19 @@
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
         "imagePublisher": "microsoft-dsvm",
         "imageOffer": "linux-data-science-vm-ubuntu",
-        "OSDiskName": "[concat(parameters('vmName'),'-osdisk')]",
-        "DataDiskName": "[concat(parameters('vmName'),'-data-0')]",
         "sku": "linuxdsvmubuntu",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
         "storageAccountType": "Standard_LRS",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[concat('dsvm-',toLower(parameters('vmName') ) )]",
-        "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
+        "nsgName": "[concat(parameters('vmName'),'-nsg')]",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",        
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
         "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/IoT/vm_configure.sh",
@@ -93,15 +80,34 @@
         "commandToExecute": "[concat(variables('command'),variables('scriptParameters'))]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2015-05-01-preview",
+		{
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
             "location": "[variables('location')]",
+            "name": "[variables('nsgName')]",
             "properties": {
-                "accountType": "[variables('storageAccountType')]"
+                "securityRules": [
+                    {
+                        "name": "Allow-SSH-Jupyterhub",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "22",
+                                "8000"
+                            ],
+                            "destinationPortRange": ""
+                        }
+                    }
+                ]
             }
-        },
+        },        
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -120,6 +126,9 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+              ],             
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -147,6 +156,7 @@
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/publicIPAddresses/', concat(variables('publicIPAddressName'),copyindex()))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]",	                
                 "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
             ],
             "properties": {
@@ -163,7 +173,10 @@
                             }
                         }
                     }
-                ]
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
             }
         },
         {
@@ -194,7 +207,6 @@
                 "Application": "DataScience"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyindex())]"
             ],
             "properties": {
@@ -214,14 +226,17 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[variables('OSDiskName')]",
-                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storageAccountType')]"
+                        },
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "name": "[variables('DataDiskName')]",
-                            "createOption": "fromImage",
+                            "managedDisk": {
+                                "storageAccountType": "[variables('storageAccountType')]"
+                            },
+                            "createOption": "FromImage",
                             "lun": 0
                         }
                     ]
@@ -235,8 +250,7 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": "true",
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                        "enabled": false
                     }
                 }
             },
@@ -244,7 +258,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('vmName')]",
-                    "apiVersion": "2015-06-15",
+                    "apiVersion": "2017-03-30",
                     "location": "[variables('location')]",
                     "dependsOn": [
                         "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
