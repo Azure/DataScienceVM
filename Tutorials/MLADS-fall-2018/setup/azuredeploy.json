@@ -37,8 +37,9 @@
     },
     "variables": {
         "location": "[resourceGroup().location]",
+        "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",	    
         "numberOfInstances": "[int(parameters('numberOfInstances'))]",
-        "imagePublisher": "microsoft-ads",
+        "imagePublisher": "microsoft-dsvm",
         "imageOffer": "linux-data-science-vm-ubuntu",        
         "OSDiskName": "osdiskforlinuxsimple",
         "DataDiskName": "datadiskforlinuxsimple",        
@@ -48,28 +49,48 @@
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
         "storageAccountType": "Standard_LRS",
-        "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'lindsvm')]",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
         "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
         "vmSize": "[parameters('vmSize')]",
         "virtualNetworkName": "[parameters('vmName')]",
+        "nsgName": "[concat(parameters('vmName'),'-nsg')]",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",   
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Tutorials/MLADS-spring-2018/setup/configure_vm.sh",
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Tutorials/MLADS-fall-2018/setup/configure_vm.sh",
         "commandToExecute": "bash configure_vm.sh"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2015-05-01-preview",
+		{
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
             "location": "[variables('location')]",
+            "name": "[variables('nsgName')]",
             "properties": {
-                "accountType": "[variables('storageAccountType')]"
+                "securityRules": [
+                    {
+                        "name": "Allow-SSH-Jupyterhub",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "22",
+                                "8000"
+                            ],
+                            "destinationPortRange": ""
+                        }
+                    }
+                ]
             }
-        },
+        },        
         {
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -91,6 +112,9 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworkName')]",
             "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+              ],    
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -101,7 +125,10 @@
                     {
                         "name": "[variables('subnetName')]",
                         "properties": {
-                            "addressPrefix": "[variables('subnetPrefix')]"
+                            "addressPrefix": "[variables('subnetPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[variables('nsgId')]"
+                           }
                         }
                     }
                 ]
@@ -138,24 +165,38 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
+          "apiVersion": "2017-09-01",
+          "type": "Microsoft.Authorization/roleAssignments",
+          "name": "[guid(resourceGroup().id)]",
+          "copy": {
+            "name": "roleLoop",
+            "count": "[variables('numberOfInstances')]"
+          },          
+          "properties": {
+                "roleDefinitionId": "[variables('Contributor')]",
+                "principalId": "[reference(concat(resourceId('Microsoft.Compute/virtualMachines/', concat(variables('vmName'), copyindex())),'/providers/Microsoft.ManagedIdentity/Identities/default'),'2015-08-31-PREVIEW').principalId]",
+                "scope": "[resourceGroup().id]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
+          ]        
+        },	    
+        {
+            "apiVersion": "2018-06-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('vmName'), copyIndex())]",
             "location": "[variables('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+              },
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[variables('numberOfInstances')]"
-            },
-            "plan": {
-                "name": "[variables('sku')]",
-                "product": "[variables('imageOffer')]",
-                "publisher": "[variables('imagePublisher')]"
             },
             "tags": {
                 "Application": "DataScience"
             },
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'), copyindex())]"
             ],
             "properties": {
@@ -175,23 +216,20 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('OSDiskName'), variables('vmName'), copyIndex(), '.vhd')]"
-                        },
-                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"           
+                          },
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "name": "data-0",
-                            "vhd": {
-                              "uri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net/',variables('vmStorageAccountContainerName'),'/',variables('DataDiskName'), variables('vmName'), copyIndex(),  '.vhd')]"
-                            },
-                            "createOption": "fromImage",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"           
+                              },
+                            "createOption": "FromImage",
                             "lun": 0
                         }
-                    ]                    
+                    ]              
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -202,8 +240,7 @@
                 },
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
-                        "enabled": "true",
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                        "enabled": false
                     }
                 }
             },
@@ -211,7 +248,7 @@
 			 {
 			  "type": "extensions",
 			  "name": "[variables('vmName')]",
-			  "apiVersion": "2015-06-15",
+			  "apiVersion": "2018-06-01",
 			  "location": "[variables('location')]",
 			  "dependsOn": [
 				"[concat('Microsoft.Compute/virtualMachines/', variables('vmName'),copyindex())]"
