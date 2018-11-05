@@ -8,7 +8,7 @@ conda activate py36
 # pip install --upgrade azureml-sdk[notebooks,contrib,automl]
 
 wget https://dsvmassets.blob.core.windows.net/mladsfall2018/azureml_train_widgets.tar.gz -O /tmp/azureml_train_widgets.tar.gz
-tar xzf /tmp/azureml_train_widgets.tar.gz /usr/local/share/jupyter/nbextensions
+tar xzf /tmp/azureml_train_widgets.tar.gz -C /usr/local/share/jupyter/nbextensions
 
 mkdir -p /etc/skel/.jupyter/nbconfig
 echo '{ "load_extensions": { "azureml_train_widgets/extension": true } }' | tee /etc/skel/.jupyter/nbconfig/notebook.json
