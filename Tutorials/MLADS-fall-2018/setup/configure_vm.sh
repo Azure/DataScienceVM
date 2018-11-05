@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source /etc/profile
 conda activate py36
 
 # upgrade the SDK and enable the widgets 
