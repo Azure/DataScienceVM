@@ -1,9 +1,17 @@
 #!/bin/bash
 
-# Need to upgrade the SDK and install the widgets here
-
 conda activate py36
-conda install h5py
+
+# upgrade the SDK and enable the widgets 
+# TODO: is this needed for MLADS?
+# pip install --upgrade azureml-sdk[notebooks,contrib,automl]
+jupyter nbextension install --py azureml.train.widgets
+jupyter nbextension enable --py azureml.train.widgets
+mkdir -p /etc/skel/.jupyter/nbconfig
+echo '{ "load_extensions": { "azureml_train_widgets/extension": true } }' | tee /etc/skel/.jupyter/nbconfig/notebook.json
+
+# install h5py for Keras
+conda install h5py -y
 
 # tell Spark to use fewer resources so several users can submit simultaneous jobs
 # sed -i -e 's/spark.driver.memory 5g/spark.driver.memory 1g/g' /dsvm/tools/spark/current/conf/spark-defaults.conf
