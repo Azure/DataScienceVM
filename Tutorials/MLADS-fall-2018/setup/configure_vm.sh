@@ -6,9 +6,10 @@ conda activate py36
 # upgrade the SDK and enable the widgets 
 # TODO: is this needed for MLADS?
 # pip install --upgrade azureml-sdk[notebooks,contrib,automl]
-USER=`tail -n 1 /etc/passwd | cut -d ":" -f 1`
-su $USER -c "source /etc/profile && conda activate py36 && jupyter nbextension install --py azureml.train.widgets"
-su $USER -c "source /etc/profile && conda activate py36 && jupyter nbextension enable --py azureml.train.widgets"
+
+wget https://dsvmassets.blob.core.windows.net/mladsfall2018/azureml_train_widgets.tar.gz -O /tmp/azureml_train_widgets.tar.gz
+tar xzf /tmp/azureml_train_widgets.tar.gz /usr/local/share/jupyter/nbextensions
+
 mkdir -p /etc/skel/.jupyter/nbconfig
 echo '{ "load_extensions": { "azureml_train_widgets/extension": true } }' | tee /etc/skel/.jupyter/nbconfig/notebook.json
 
