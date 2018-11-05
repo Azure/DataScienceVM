@@ -40,7 +40,7 @@ class LogEpochStats(keras.callbacks.Callback):
         # log accuracies
         self.run.log('training_acc', np.float(logs['acc']))
         self.run.log('validation_acc', np.float(logs['val_acc']))
-        print('got {0} {1}'.format(np.float(logs['acc'], np.float(logs['val_acc']))
+        print('got {0} {1}'.format(logs['acc'], logs['val_acc']))
 
              
 parser = argparse.ArgumentParser()
