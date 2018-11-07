@@ -25,6 +25,13 @@ mkdir /etc/skel/notebooks/MLADS-fall-2018
 git clone https://github.com/Azure/DataScienceVM /data/DataScienceVM
 mv /data/DataScienceVM/Tutorials/MLADS-fall-2018/* /etc/skel/notebooks/MLADS-fall-2018
 
+
+# All users should have write access
+mkdir /tmp/azureml_runs
+chmod 777 /tmp/azureml_runs/
+
+
+
 # copy the notebooks to the initial user's profile
 for filename in /home/*; do
   dir=$filename/notebooks
