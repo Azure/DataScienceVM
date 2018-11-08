@@ -167,7 +167,7 @@
         {
           "apiVersion": "2017-09-01",
           "type": "Microsoft.Authorization/roleAssignments",
-          "name": "[concat(variables('vmName'), '-ra-', copyindex())]",
+          "name": "[guid(concat(variables('vmName'), '-ra-', copyindex()))]",
           "copy": {
             "name": "roleLoop",
             "count": "[variables('numberOfInstances')]"
