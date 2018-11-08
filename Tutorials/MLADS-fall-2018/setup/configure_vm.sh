@@ -41,10 +41,11 @@ for filename in /home/*; do
   chown $user $dir/MLADS-fall-2018
 done
 
+host=`hostname`
 # create users
 # we are skipping this part now that MLADS is over, and most people using this template want
 # to use it with the initial user account
-for i in $(seq 1 4);  do
+for i in $(seq 1 6);  do
   u=`openssl rand -hex 2`;
   # replace 1 with g
   u=`echo $u | sed -e 's/1/g/g'`
@@ -59,6 +60,6 @@ for i in $(seq 1 4);  do
 
   useradd -m -d /home/user$u -s /bin/bash user$u
   echo user$u:$p | chpasswd
-  echo user$u, $p >> '/data/usersinfo.csv';
+  echo $host, user$u, $p >> '/data/usersinfo.csv';
   usermod -aG docker user$u
 done
