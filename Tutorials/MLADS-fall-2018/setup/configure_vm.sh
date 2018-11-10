@@ -34,8 +34,8 @@ mkdir /tmp/azureml_runs
 chmod 777 /tmp/azureml_runs/
 
 # enable password auth
-sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-systemctl restart sshd
+#sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+#systemctl restart sshd
 
 
 # copy the notebooks to the initial user's profile
