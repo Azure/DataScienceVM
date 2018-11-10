@@ -8,10 +8,10 @@
                 "description": "Username for the Virtual Machine."
             }
         },
-        "adminPassword": {
-            "type": "securestring",
+        "sshKeyData": {
+            "type": "string",
             "metadata": {
-                "description": "Password for the Virtual Machine."
+                "description": "SSH public key data as a string."
             }
         },
         "numberOfInstances": {
@@ -60,7 +60,8 @@
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
         "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Tutorials/MLADS-fall-2018/setup/configure_vm.sh",
-        "commandToExecute": "bash configure_vm.sh"
+        "commandToExecute": "bash configure_vm.sh",
+        "sshKeyPath": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]"
     },
     "resources": [
 		{
@@ -206,7 +207,17 @@
                 "osProfile": {
                     "computerName": "[concat(variables('vmName'), copyIndex())]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[variables('sshKeyPath')]",
+                                    "keyData": "[parameters('sshKeyData')]"
+                                }
+                            ]
+                        }
+                    }
                 },
                 "storageProfile": {
                     "imageReference": {
