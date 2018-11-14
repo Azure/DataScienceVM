@@ -16,9 +16,6 @@ echo '{ "load_extensions": { "azureml_train_widgets/extension": true } }' | tee 
 # install h5py for Keras
 conda install h5py -y
 
-wget https://dsvmassets.blob.core.windows.net/mladsfall2018/keras.tar.gz -O /tmp/keras.tar.gz
-tar xzf /tmp/keras.tar.gz -C /etc/skel
-
 # tell Spark to use fewer resources so several users can submit simultaneous jobs
 # sed -i -e 's/spark.driver.memory 5g/spark.driver.memory 1g/g' /dsvm/tools/spark/current/conf/spark-defaults.conf
 # echo "spark.executor.cores 1" >> /dsvm/tools/spark/current/conf/spark-defaults.conf
