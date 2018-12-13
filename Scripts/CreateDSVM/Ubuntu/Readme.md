@@ -23,7 +23,7 @@ These directions show you how to create an Ubuntu DSVM using the portal or the A
  -    <img src="http://azuredeploy.net/deploybutton.png"/>
  -</a>
 
-For example: NC6 (1 K80 GPU) instance cost **$0.18/hour compared to $0.90/hour** (depending on region). See [low priority instance pricing](https://azure.microsoft.com/pricing/details/virtual-machine-scale-sets/linux/) for the latest price for the specific region.
+For example: NC6 (1 K80 GPU) low-priority (pre-emptible) instance costs **$0.18/hour compared to $0.90/hour** for a dedicated instance  (depending on region). See [low priority instance pricing](https://azure.microsoft.com/pricing/details/virtual-machine-scale-sets/linux/) for the latest price for the specific region.
 
 ## Creating a DSVM for Linux (Ubuntu) using the command line
 
