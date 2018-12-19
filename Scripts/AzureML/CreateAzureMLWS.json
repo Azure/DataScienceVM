@@ -1,0 +1,145 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "description": {
+            "type": "string",
+            "metadata": {
+                "description": "Description of the AML Workspace."
+            },
+            "defaultValue": ""                       
+        },
+        "friendlyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Friendly Alias of the AML Workspace."
+            },
+            "defaultValue": ""               
+        },
+        "machineLearningApiVersion": {
+            "type": "string",
+            "defaultValue": "2018-03-01-preview"
+        },
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the AML Workspace."
+            }
+        },
+        "location" : {
+            "type" : "string",
+            "metadata": {
+                "description": "Region of the resource"
+            },
+            "defaultValue": "[resourceGroup().location]"
+        }
+    },
+    "variables": {
+        "name" :"[parameters('name')]",
+        "genid" :"[concat(parameters('name'),uniqueString(subscription().subscriptionId,variables('name')))]",
+        "newContainerRegistryName": "[concat('cr',variables('genid'))]",
+        "newStorageAccountName": "[concat('sa',variables('genid'))]",     
+        "appInsightsName": "[concat('ai',variables('genid'))]",    
+        "keyVaultName": "[concat('kv',variables('genid'))]",    
+        "newContainerRegistryType": "Basic",
+        "newStorageAccountType": "Standard_LRS",
+        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts',variables('newStorageAccountName'))]",
+        "containerRegistryId": "[resourceId('Microsoft.ContainerRegistry/registries', variables('newContainerRegistryName'))]",  
+        "storageApiVersion": "2016-12-01",
+        "appInsightsApiVersion": "2015-05-01",
+        "containerRegistryApiVersion": "2017-10-01",
+        "appInsightsId": "[resourceId('Microsoft.Insights/components', variables('appInsightsName'))]",
+        "appInsightsKind": "web",
+        "appInsightsType": "web",
+        "appInsightsLocation": "[parameters('location')]",
+        "keyVaultApiVersion": "2015-06-01",
+        "keyVaultId": "[resourceId('Microsoft.KeyVault/vaults',variables('keyVaultName'))]",
+        "keyVaultTenant": "[subscription().tenantId]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces",
+            "name": "[parameters('name')]",
+            "apiVersion": "[parameters('machineLearningApiVersion')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "systemAssigned"
+            },
+            "properties": {
+                "containerRegistry": "[variables('containerRegistryId')]",
+                "descsription": "[parameters('description')]",
+                "friendlyName": "[parameters('friendlyName')]",
+                "keyVault": "[variables('keyVaultId')]",
+                "storageAccount": "[variables('storageAccountId')]",
+                "applicationInsights": "[variables('appInsightsId')]"
+            },
+            "dependsOn": [
+                "[variables('containerRegistryId')]",
+                "[variables('keyVaultId')]",
+                "[variables('storageAccountId')]",
+                "[variables('appInsightsId')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "[variables('newStorageAccountType')]"
+            },
+            "kind": "Storage",
+            "name": "[variables('newStorageAccountName')]",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "sku": {
+                "name": "[variables('newContainerRegistryType')]"
+            },
+            "kind": "Registry",
+            "name": "[variables('newContainerRegistryName')]",
+            "apiVersion": "[variables('containerRegistryApiVersion')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "adminUserEnabled": true
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('keyVaultName')]",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accessPolicies": [],
+                "enabledForDeployment": true,
+                "enabledForTemplateDeployment": true,
+                "enabledForVolumeEncryption": true,
+                "sku": {
+                    "name": "standard",
+                    "family": "A"
+                },
+                "tenantId": "[variables('keyVaultTenant')]"
+            }
+        },
+        {
+            "type": "Microsoft.Insights/components",
+            "kind": "[variables('appInsightsKind')]",
+            "name": "[variables('appInsightsName')]",
+            "apiVersion": "[variables('appInsightsApiVersion')]",
+            "location": "[variables('appInsightsLocation')]",
+            "properties": {
+                "Application_Type": "[variables('appInsightsType')]"
+            }
+        }
+    ]
+}
