@@ -253,6 +253,6 @@
     ],
     "outputs": {
         "firstDataScienceVmUrl": { "type": "string", "value": "[concat('https://ms.portal.azure.com/#resource/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachines/', variables('vmName'), '0')]" },
-        "numInstances": { "type": "string", "value": "[parameters('numberOfInstances')]" }
+        "numInstances": { "type": "int", "value": "[parameters('numberOfInstances')]" }
     }
 }
