@@ -1,0 +1,8 @@
+{
+  "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
+  "itemDisplayName": "Data Science Virtual Machine with fast.ai extension",
+  "description": "Template for creating a Data Science VM along with fast.ai libraries and notebooks",
+  "summary": "Data Science VM with fast.ai",
+  "githubUsername": "gopitk",
+  "dateUpdated": "2019-01-16"
+}
