@@ -5,49 +5,34 @@
         "adminUsername": {
             "type": "string",
             "metadata": {
-                "description": "Username for the Virtual Machine."
+                "description": "Admin Username on the Virtual Machine."
             }
         },
         "adminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Password for the Virtual Machine."
+                "description": "Admin Password on the Virtual Machine."
             }
         },
         "vmName": {
             "type": "string",
             "metadata": {
-                "description": "Name Prefix for the Virtual Machine."
+                "description": "Name of the Virtual Machine."
             }
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_NC6",
+            "defaultValue": "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+            "allowedValues": [
+       			"Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+        		"Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
+       			"Standard_E2s_v3 (2 vCPU, 16 GB)",
+        		"Standard_D4_v3 (4 vCPU, 16 GB)"
+            ],		
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
-        },
-		"fileUris": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/fastaiv1/fastaiLinux.sh",
-            "metadata": {
-                "description": "URL of the extension package or file"
-            }
-        },
-		"commandToExecute": {
-            "type": "string",
-            "defaultValue": "fastaiLinux.sh",
-            "metadata": {
-                "description": "Extension bash script command to execute"
-            }
-        },
-		"commandParameter": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Extension bash script command parameter"
-            }
-        }        
+        }		
     },
     "variables": {
         "location": "[resourceGroup().location]",
@@ -63,15 +48,15 @@
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
         "vmName": "[parameters('vmName')]",
-        "vmSize": "[parameters('vmSize')]",
+        "vmSize": "[substring(parameters('vmSize'),0, indexOf(parameters('vmSize'), ' ('))]",
         "virtualNetworkName": "[parameters('vmName')]",
         "nsgName": "[concat(parameters('vmName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
-        "fileUris": "[parameters('fileUris')]",
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/fastaiv1/fastaiLinux.sh",
         "imageversion": "18.12.01",
-        "commandToExecute": "[concat('bash ', parameters('commandToExecute'), ' ', parameters('commandParameter'))]"        
+        "commandToExecute": "bash fastaiLinux.sh"        
     },
     "resources": [
 		{
