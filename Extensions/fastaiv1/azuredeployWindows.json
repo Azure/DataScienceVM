@@ -5,24 +5,30 @@
         "adminUsername": {
             "type": "string",
             "metadata": {
-                "description": "Username for the Virtual Machine."
+                "description": "Username on the Virtual Machine."
             }
         },
         "adminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Password for the Virtual Machine."
+                "description": "Password on the Virtual Machine."
             }
         },
         "vmName": {
             "type": "string",
             "metadata": {
-                "description": "Name for the Virtual Machine."
+                "description": "Name of the Virtual Machine."
             }
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_NC6",
+            "defaultValue": "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+            "allowedValues": [
+       			"Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+        		"Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
+       			"Standard_E2s_v3 (2 vCPU, 16 GB)",
+        		"Standard_D4s_v3 (4 vCPU, 16 GB)"
+            ],		
             "metadata": {
                 "description": "Size for the Virtual Machine."
             }
@@ -42,7 +48,7 @@
         "publicIPAddressName": "[parameters('vmName')]",
         "vmStorageAccountContainerName": "vhds",
         "vmName": "[parameters('vmName')]",
-        "vmSize": "[parameters('vmSize')]",
+        "vmSize": "[substring(parameters('vmSize'),0, indexOf(parameters('vmSize'), ' ('))]",
         "virtualNetworkName": "[parameters('vmName')]",
         "nsgName": "[concat(parameters('vmName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",        
@@ -85,10 +91,7 @@
             "name": "[variables('publicIPAddressName')]",
             "location": "[variables('location')]",
             "properties": {
-                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
-                "dnsSettings": {
-                    "domainNameLabel": "[variables('publicIPAddressName')]"
-                }
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
             }
         },
         {

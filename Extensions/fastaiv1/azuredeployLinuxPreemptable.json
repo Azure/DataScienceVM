@@ -2,60 +2,58 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "vmSku": {
+      "vmSize": {
         "type": "string",
-        "defaultValue": "Standard_NC6",
+        "defaultValue": "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+        "allowedValues": [
+         "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+        "Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
+         "Standard_E2s_v3 (2 vCPU, 16 GB)",
+        "Standard_D4_v3 (4 vCPU, 16 GB)"
+        ],		
         "metadata": {
-          "description": "Size of VMs in the VM Scale Set."
+            "description": "Size for the Virtual Machine."
         }
       },
-      "vmssName": {
+      "vmNamePrefix": {
         "type": "string",
         "metadata": {
-          "description": "String used as a base for naming resources (9 characters or less). A hash is prepended to this string for some resources, and resource-specific information is appended."
+          "description": "Prefix used to name the VM and other resources created in this template."
         },
         "maxLength": 9
-      },
-      "instanceCount": {
-        "type": "int",
-        "defaultValue": 1,
-        "metadata": {
-          "description": "Number of VM instances (100 or less)."
-        },
-        "maxValue": 100
       },
       "adminUsername": {
         "type": "string",
         "metadata": {
-          "description": "Admin username on all VMs."
+          "description": "Admin username on the VM."
         }
       },
       "adminPassword": {
         "type": "securestring",
         "metadata": {
-          "description": "Admin password on all VMs."
+          "description": "Admin password on the VM."
         }
       }
     },
     "variables": {
       "location": "[resourceGroup().location]",
       "subnetName": "dsvmss",
-      "virtualNetworkName": "[concat(parameters('vmssName'), '-vnet')]", 
-      "publicIPAddressName": "[concat(parameters('vmssName'), 'pip')]",	
+      "virtualNetworkName": "[concat(parameters('vmNamePrefix'), '-vnet')]", 
+      "publicIPAddressName": "[concat(parameters('vmNamePrefix'), 'pip')]",	
       "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
       "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
       "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
       "addressPrefix": "10.0.0.0/16",
       "subnetPrefix": "10.0.0.0/24",	
-      "loadBalancerName": "[concat(parameters('vmssName'), 'lb')]",
+      "loadBalancerName": "[concat(parameters('vmNamePrefix'), 'lb')]",
       "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
-      "natPoolName": "[concat(parameters('vmssName'), 'sshnat')]",
-      "bePoolName": "[concat(parameters('vmssName'), 'bepool')]",
+      "natPoolName": "[concat(parameters('vmNamePrefix'), 'sshnat')]",
+      "bePoolName": "[concat(parameters('vmNamePrefix'), 'bepool')]",
       "natStartPort": 50000,
       "natEndPort": 50120,
       "natBackendPort": 22,
-      "nicName": "[concat(parameters('vmssName'), 'nic')]",
-      "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
+      "nicName": "[concat(parameters('vmNamePrefix'), 'nic')]",
+      "ipConfigName": "[concat(parameters('vmNamePrefix'), 'ipconfig')]",
       "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
       "lbProbeIDjupyter": "[concat(variables('lbID'),'/probes/Jupyterprobe')]",    
       "lbProbeIDssh": "[concat(variables('lbID'),'/probes/sshprobe')]",        
@@ -68,7 +66,9 @@
       "imageReference": "[variables('osType')]",
       "computeApiVersion": "2017-03-30",
       "networkApiVersion": "2017-04-01",
-      "insightsApiVersion": "2015-04-01"
+      "insightsApiVersion": "2015-04-01",
+      "instanceCount": 1,
+      "vmSize": "[substring(parameters('vmSize'),0, indexOf(parameters('vmSize'), ' ('))]"
     },
     "resources": [
       {
@@ -192,7 +192,7 @@
       },
       {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
-        "name": "[parameters('vmssName')]",
+        "name": "[parameters('vmNamePrefix')]",
         "location": "[variables('location')]",
         "apiVersion": "2018-10-01",
         "dependsOn": [
@@ -200,9 +200,9 @@
           "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
             ],
         "sku": {
-          "name": "[parameters('vmSku')]",
+          "name": "[variables('vmSize')]",
           "tier": "Standard",
-          "capacity": "[parameters('instanceCount')]"
+          "capacity": "[variables('instanceCount')]"
         },
         "properties": {
           "overprovision": false,
@@ -220,7 +220,7 @@
               "imageReference": "[variables('imageReference')]"
             },
             "osProfile": {
-              "computerNamePrefix": "[parameters('vmssName')]",
+              "computerNamePrefix": "[parameters('vmNamePrefix')]",
               "adminUsername": "[parameters('adminUsername')]",
               "adminPassword": "[parameters('adminPassword')]"
             },
