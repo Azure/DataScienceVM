@@ -43,7 +43,7 @@
         "addressPrefix": "10.0.0.0/16",
         "subnetName": "Subnet",
         "subnetPrefix": "10.0.0.0/24",
-        "storageAccountType": "Standard_LRS",
+        "storageAccountType": "StandardSSD_LRS",
         "publicIPAddressType": "Dynamic",
         "publicIPAddressName": "[parameters('vmName')]",
         "vmStorageAccountContainerName": "vhds",
@@ -149,7 +149,7 @@
             }
         },
         {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2018-04-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('vmName')]",
             "location": "[variables('location')]",
