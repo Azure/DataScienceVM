@@ -1,6 +1,7 @@
 #!/bin/bash
 /anaconda/bin/conda create -y -n fastai python=3.6
 source /anaconda/bin/activate fastai
+pip install dataclasses
 /anaconda/bin/conda install  -y -c pytorch pytorch torchvision
 /anaconda/bin/conda install  -y -c fastai fastai
 /anaconda/bin/conda install  -y ipykernel
