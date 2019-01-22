@@ -1,6 +1,6 @@
 cmd.exe /c "activate root &  conda create -y -n fastai python=3.6 ipykernel"
-cmd.exe /c "activate fastai &  conda install -c pytorch pytorch torchvision -y"
-cmd.exe /c "activate fastai &  conda install -c fastai fastai -y"
+cmd.exe /c "activate fastai &  conda install -c pytorch pytorch -y"
+cmd.exe /c "activate fastai &  pip install fastai"
 function fixKernelSpec()  ##Fix the kernels name in course notebook to ensure right kernel is started
 {
 
