@@ -2,7 +2,7 @@
 /anaconda/bin/conda create -y -n fastai python=3.6
 source /anaconda/bin/activate fastai
 pip install dataclasses
-/anaconda/bin/conda install  -y -c pytorch pytorch torchvision
+/anaconda/bin/conda install  -y -c pytorch pytorch torchvision cudatoolkit=9.0
 /anaconda/bin/conda install  -y -c fastai fastai
 /anaconda/bin/conda install  -y ipykernel
 python -m ipykernel install --name 'fastai' --display-name 'Python (fastai)'
