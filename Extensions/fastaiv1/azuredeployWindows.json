@@ -38,6 +38,7 @@
         "location": "[resourceGroup().location]",
         "imagePublisher": "microsoft-dsvm",
         "imageOffer": "dsvm-windows",
+	"imageVersion": "19.01.14",
         "sku": "server-2016",
         "nicName": "[parameters('vmName')]",
         "addressPrefix": "10.0.0.0/16",
@@ -173,7 +174,7 @@
                         "publisher": "[variables('imagePublisher')]",
                         "offer": "[variables('imageOffer')]",
                         "sku": "[variables('sku')]",
-                        "version": "latest"
+                        "version": "[variables('imageVersion')]"
                     },
                     "osDisk": {
                         "managedDisk": {
