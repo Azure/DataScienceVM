@@ -34,3 +34,24 @@ for filename in /home/*; do
   chown -R $user $dir
   chgrp -R $user $dir
 done
+
+host=`hostname`
+# create users
+for i in $(seq 1 6);  do
+  u=`openssl rand -hex 2`;
+  # replace 1 with g
+  u=`echo $u | sed -e 's/1/g/g'`
+  # replace 0 with h
+  u=`echo $u | sed -e 's/0/h/g'`
+
+  p=`openssl rand -hex 4`;
+  # replace 1 with g
+  p=`echo $p | sed -e 's/1/g/g'`
+  # replace 0 with h
+  p=`echo $p | sed -e 's/0/h/g'`
+
+  useradd -m -d /home/user$u -s /bin/bash user$u
+  echo user$u:$p | chpasswd
+  echo $host, user$u, $p >> '/data/usersinfo.csv';
+  usermod -aG docker user$u
+done
