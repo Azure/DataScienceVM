@@ -18,7 +18,7 @@ cat << EOF | sudo tee /etc/samba/smb.conf > /dev/null
         security = ads
         realm = YOURACTIVEDIRECTORYFULLDOMAININCAPS (for example: LAB.EXAMPLE.COM)
 # If the system doesn't find the domain controller automatically, you may need the following line
-        password server = 10.0.0.1
+#        password server = 10.0.0.1
 # note that workgroup is the 'short' domain name
         workgroup = YOURSHORTDOMAIN (for example: LAB)
 #       winbind separator = +
