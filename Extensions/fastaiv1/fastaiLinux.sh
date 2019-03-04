@@ -5,6 +5,7 @@ pip install dataclasses
 /anaconda/bin/conda install  -y -c pytorch pytorch torchvision cudatoolkit=9.0
 /anaconda/bin/conda install  -y -c fastai fastai
 /anaconda/bin/conda install  -y ipykernel
+/anaconda/bin/conda install  -y nb_conda_kernels
 python -m ipykernel install --name 'fastai' --display-name 'Python (fastai)'
 # Script to update Notbook metadata
 cat << EOF > /tmp/changenbmeta.py
