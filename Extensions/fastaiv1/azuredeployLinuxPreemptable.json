@@ -61,7 +61,7 @@
           "publisher": "microsoft-dsvm",
           "offer": "linux-data-science-vm-ubuntu",
           "sku": "linuxdsvmubuntu",
-          "version": "18.12.01"
+          "version": "latest"
       },
       "imageReference": "[variables('osType')]",
       "computeApiVersion": "2017-03-30",
@@ -211,7 +211,7 @@
           },
           "virtualMachineProfile": {
             "priority": "Low",
-            "evictionPolicy": "delete",
+            "evictionPolicy": "deallocate",
             "storageProfile": {
               "osDisk": {
                 "createOption": "FromImage",
