@@ -1,4 +1,4 @@
-cmd.exe /c "activate root &  conda create -y -n fastai python=3.6.5 ipykernel nbconvert scipy"
+cmd.exe /c "activate root &  conda create -y -n fastai python=3.6.5 ipykernel nbconvert scipy ipywidgets"
 cmd.exe /c "activate fastai &  conda install -c pytorch pytorch=1.0.0  -y"
 cmd.exe /c "activate fastai &  pip install fastai"
 function fixKernelSpec()  ##Fix the kernels name in course notebook to ensure right kernel is started
