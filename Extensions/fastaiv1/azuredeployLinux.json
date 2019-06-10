@@ -55,7 +55,7 @@
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
         "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/fastaiv1/fastaiLinux.sh",
-        "imageversion": "18.12.01",
+        "imageversion": "latest",
         "commandToExecute": "bash fastaiLinux.sh"        
     },
     "resources": [
@@ -156,7 +156,7 @@
             "name": "[variables('vmName')]",
             "location": "[variables('location')]",         
             "tags": {
-                "Application": "DataScience"
+                "Application": "fastai"
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
