@@ -1,0 +1,238 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin Username on the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin Password on the Virtual Machine."
+            }
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Machine."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_NC6_Promo  (1 Nvidia K80 GPU, 6 vCPU)",
+            "allowedValues": [
+       			"Standard_NC6_Promo (1 Nvidia K80 GPU, 6 vCPU)",
+        		"Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
+       			"Standard_E2s_v3 (2 vCPU, 16 GB)",
+        		"Standard_D4s_v3 (4 vCPU, 16 GB)"
+            ],		
+            "metadata": {
+                "description": "Size for the Virtual Machine."
+            }
+        }		
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "imagePublisher": "microsoft-dsvm",
+        "imageOffer": "linux-data-science-vm-ubuntu",
+        "OSDiskName": "[concat(parameters('vmName'),'-osdisk')]",
+        "DataDiskName": "[concat(parameters('vmName'),'-data-0')]",
+        "sku": "linuxdsvmubuntu",
+        "nicName": "[parameters('vmName')]",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetName": "Subnet",
+        "subnetPrefix": "10.0.0.0/24",
+        "publicIPAddressType": "Dynamic",
+        "publicIPAddressName": "[parameters('vmName')]",
+        "vmName": "[parameters('vmName')]",
+        "vmSize": "[substring(parameters('vmSize'),0, indexOf(parameters('vmSize'), ' ('))]",
+        "virtualNetworkName": "[parameters('vmName')]",
+        "nsgName": "[concat(parameters('vmName'),'-nsg')]",
+        "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+        "fileUris": "https://raw.githubusercontent.com/Azure/DataScienceVM/master/Extensions/kubeflow/kfonenode.sh",
+        "imageversion": "latest",
+        "commandToExecute": "bash kfonenode.sh"        
+    },
+    "resources": [
+		{
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "location": "[variables('location')]",
+            "name": "[variables('nsgName')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Allow-SSH-Jupyterhub-k8s",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [
+                                "22",
+                                "8000",
+                                "8005"
+                            ],
+                            "destinationPortRange": ""
+                        }
+                    }
+                ]
+            }
+        },        
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+              ],            
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]",                
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "location": "[variables('location')]",         
+            "tags": {
+                "Application": "fastai"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[variables('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('sku')]",
+                        "version": "[variables('imageversion')]"
+                    },
+                    "osDisk": {
+                        "name": "[variables('OSDiskName')]",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS"           
+                          },
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "name": "[variables('DataDiskName')]",
+                            "managedDisk": {
+                                "storageAccountType": "StandardSSD_LRS"           
+                              },
+                            "createOption": "FromImage",
+                            "lun": 0
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": false
+                    }
+                }
+            },
+			"resources": [
+                {
+                 "type": "extensions",
+                 "name": "[variables('vmName')]",
+                 "apiVersion": "2017-03-30",
+                 "location": "[variables('location')]",
+                 "dependsOn": [
+                   "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                 ],
+                 "properties": {
+                   "publisher": "Microsoft.OSTCExtensions",
+                   "type": "CustomScriptForLinux",
+                   "typeHandlerVersion": "1.4",
+                   "autoUpgradeMinorVersion": true,
+                   "settings": {
+                     "fileUris": "[split(variables('fileUris'), ' ')]",
+                     "commandToExecute": "[variables('commandToExecute')]"
+                   }
+                 }
+                }
+               ]            
+        }
+    ],
+    "outputs": {
+        "DataScienceVmUrl": { "type": "string", "value": "[concat('https://ms.portal.azure.com/#resource/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Compute/virtualMachines/', variables('vmName'))]" }
+    }
+}
