@@ -22,7 +22,7 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_NC6_Promo  (1 Nvidia K80 GPU, 6 vCPU)",
+            "defaultValue": "Standard_NC6_Promo (1 Nvidia K80 GPU, 6 vCPU)",
             "allowedValues": [
        			"Standard_NC6_Promo (1 Nvidia K80 GPU, 6 vCPU)",
         		"Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
@@ -157,7 +157,7 @@
             "name": "[variables('vmName')]",
             "location": "[variables('location')]",         
             "tags": {
-                "Application": "fastai"
+                "Application": "kubeflow"
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
