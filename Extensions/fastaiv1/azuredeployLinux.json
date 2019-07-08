@@ -22,9 +22,10 @@
         },
         "vmSize": {
             "type": "string",
-            "defaultValue": "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+            "defaultValue": "Standard_NC6_Promo (1 Nvidia K80 GPU, 6 vCPU - Promo Pricing)",
             "allowedValues": [
-       			"Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
+       			"Standard_NC6_Promo (1 Nvidia K80 GPU, 6 vCPU - Promo Pricing)",
+		        "Standard_NC6 (1 Nvidia K80 GPU, 6 vCPU)",
         		"Standard_NC6s_v3 (1 NVidia V100 GPU, 6 vCPU)",
        			"Standard_E2s_v3 (2 vCPU, 16 GB)",
         		"Standard_D4s_v3 (4 vCPU, 16 GB)"
