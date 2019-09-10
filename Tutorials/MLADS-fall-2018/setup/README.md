@@ -1,6 +1,7 @@
 Click the button below to create a Data Science VM and deploy the tutorial.
-
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fgithub.com%2FAzure%2FDataScienceVM%2Fblob%2Fmaster%2FTutorials%2FMLADS-fall-2018%2Fsetup%2Fazuredeploy.json" target="_blank">
+ -    <img src="http://azuredeploy.net/deploybutton.png"/>
+ -</a>
 
 ### Adding SSH Keys to the VMs
 After you create the VMs, it may be convenient to create an SSH key pair on one of the machine and add that key to all the DSVMs that you created. This helps with troubleshooting and taking corrective actions during the lab. 
