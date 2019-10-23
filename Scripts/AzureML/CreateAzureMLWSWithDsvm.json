@@ -101,7 +101,7 @@
             },
             "properties": {
                 "containerRegistry": "[variables('containerRegistryId')]",
-                "descsription": "[parameters('description')]",
+                "description": "[parameters('description')]",
                 "friendlyName": "[parameters('friendlyName')]",
                 "keyVault": "[variables('keyVaultId')]",
                 "storageAccount": "[variables('storageAccountId')]",
