@@ -2,8 +2,8 @@
 /anaconda/bin/conda create -y -n fastai python=3.6
 source /anaconda/bin/activate fastai
 pip install dataclasses
-/anaconda/bin/conda install  -y -c pytorch pytorch torchvision cudatoolkit=9.0
-/anaconda/bin/conda install  -y -c fastai fastai
+/anaconda/bin/conda install  -y -c pytorch pytorch torchvision cudatoolkit=10.1
+/anaconda/bin/conda install  -y -c fastai fastai pillow=6.2.1
 /anaconda/bin/conda install  -y ipykernel nbconvert ipywidgets
 python -m ipykernel install --name 'fastai' --display-name 'Python (fastai)'
 # Script to update Notbook metadata
