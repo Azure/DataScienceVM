@@ -8,6 +8,7 @@ This sample creates an Azure Data Science VM and pre-installs the fast.ai v2 lib
 ```
 wget https://raw.githubusercontent.com/Azure/DataScienceVM/master/Samples/fastai2/fastai2onAzureSpotDSVM.sh
 bash fastai2onAzureSpotDSVM.sh
+ 
 ```
 
 2. Click on the "Launch Cloud Shell" button below and follow any prompts to start an Azure Cloud Shell
@@ -15,6 +16,6 @@ bash fastai2onAzureSpotDSVM.sh
 [![Launch Cloud Shell](https://shell.azure.com/images/launchcloudshell.png "Launch Cloud Shell")](https://shell.azure.com)
 
 
-3. Paste the command that was copied to the Azure Cloud Shell to execute it. Follow the prompts.
+3. Press SHIFT-INSERT in Cloud Shell to paste the command and execute it. Follow the prompts.
 
 In a few minutes your Azure VM with fast.ai v2 is ready. That's it!
