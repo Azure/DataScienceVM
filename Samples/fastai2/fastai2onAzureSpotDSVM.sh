@@ -18,6 +18,6 @@ az vm create --name $vmname -g $vmname --image microsoft-dsvm:ubuntu-1804:1804:l
 az vm open-port --name $vmname -g $vmname --port 8000
 echo "Installing  fastai v2 and notebooks..."
 az vm extension set --resource-group $vmname --vm-name $vmname --name customScript --publisher Microsoft.Azure.Extensions --protected-settings '{"fileUris": ["https://raw.githubusercontent.com/Azure/DataScienceVM/master/Samples/fastai2/installfastai2.sh"],"commandToExecute": "./installfastai2.sh"}'
-IP=$(az vm show -d -g fastai2 -n fastai2 --query publicIps -o tsv)
+IP=$(az vm show -d -g ${vmname} --name ${vmname} --query publicIps -o tsv)
 echo "You can now login to VM with SSH or use Jupyterhub by visiting https://${IP}:8000/ (Ignore self signed cert warnings)"
 echo "Login userid is 'fastuser' with password you entered above"
