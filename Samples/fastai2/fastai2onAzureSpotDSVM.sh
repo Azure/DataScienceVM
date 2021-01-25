@@ -9,11 +9,14 @@ read -s -p "Re-enter Password: " password2
 echo
 done
 
-az group create --name $vmname -l westus2
+read -p "Azure VM Zone (default: westus2): " vmzoneinput
+vmzone=${vmzoneinput:=westus2}
+
+az group create --name $vmname -l $vmzone
 
 echo "Creating Azure Data Science VM $vmname..."
 # You can change the size parameter if you want something other than NVidia K80 GPU instance. 
-# You can find Azure size labels by running Azure CLI command in Cloud Shell "az vm list-sizes -l westus2 -o table"  
+# You can find Azure size labels by running Azure CLI command in Cloud Shell "az vm list-sizes -l $vmzone -o table"  
 az vm create --name $vmname -g $vmname --image microsoft-dsvm:ubuntu-1804:1804:latest  --priority Low --size Standard_NC6 --eviction-policy Deallocate --storage-sku StandardSSD_LRS --admin-user fastuser --admin-password $password
 az vm open-port --name $vmname -g $vmname --port 8000
 echo "Installing  fastai v2 and notebooks..."
