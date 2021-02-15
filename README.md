@@ -1,6 +1,6 @@
 # Data Science Virtual Machine
 
-The Data Science Virtual Machine (DSVM) is a customized VM image on Microsoft’s Azure cloud built specifically for doing data science. It has many popular data science and other tools pre-installed and pre-configured to jump-start building intelligent applications for advanced analytics. It is available for [Windows Server 2016](http://aka.ms/dsvm/win2016) and [Ubuntu 16.04 LTS](http://aka.ms/dsvm/ubuntu). We also offer [Windows Server 2012](http://aka.ms/dsvm) and [CentOS](http://aka.ms/dsvm/centos) versions, although Windows 2016 and Ubuntu are the recommended options. 
+The Data Science Virtual Machine (DSVM) is a customized VM image on Microsoft’s Azure cloud built specifically for doing data science. It has many popular data science and other tools pre-installed and pre-configured to jump-start building intelligent applications for advanced analytics. It is available for [Windows Server 2019](https://azuremarketplace.microsoft.com/marketplace/apps/microsoft-dsvm.dsvm-win-2019?tab=Overview) and [Ubuntu 18.04 LTS](https://azuremarketplace.microsoft.com/marketplace/apps/microsoft-dsvm.ubuntu-1804?tab=Overview).
 
 You can try the Data Science VM for free for 30 days (with $200 credits) with a free [Azure Trial](http://azure.com/free). The Ubuntu DSVM also provides a free trial through the [Azure Test Driver](aka.ms/dsvm/testdrive). The Test Drive will provide full access to you own instance of the VM with just a free Microsoft account - No Azure subscription or credit card needed.
 
